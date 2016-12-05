@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <io.vov.vitamio.widget.VideoView
+        android:id="@+id/vitamio_play"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true" />
+
+    <include layout="@layout/controller"/>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_screen_lock"
+        android:background="@android:color/transparent"
+        android:layout_marginLeft="20dp"
+        android:src="@drawable/ic_lock_open_white_24dp"
+        android:layout_centerVertical="true"
+        android:visibility="gone"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_seeking_time"
+        android:text="23:00"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:textColor="@android:color/white"
+        />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/rl_loading"
+        android:background="@android:color/black"
+        >
+        <android.support.v4.widget.ContentLoadingProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/pb_loading"
+            android:layout_centerInParent="true"
+            android:progress="2"
+            android:max="10"
+            android:layout_margin="20dp"
+            style="@android:style/Widget.Holo.ProgressBar"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="视频加载中，请稍后..."
+            android:layout_below="@id/pb_loading"
+            android:layout_centerHorizontal="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            />
+    </RelativeLayout>
+</RelativeLayout>

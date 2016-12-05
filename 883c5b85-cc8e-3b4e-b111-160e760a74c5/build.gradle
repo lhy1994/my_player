@@ -1,0 +1,2 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('883c5b85-cc8e-3b4e-b111-160e760a74c5.jar'))
