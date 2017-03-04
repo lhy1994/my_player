@@ -22,7 +22,8 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.liuhaoyuan.myplayer.domain.Song;
+import com.liuhaoyuan.myplayer.activity.MusicPlayActivity;
+import com.liuhaoyuan.myplayer.aidl.Song;
 
 import java.util.ArrayList;
 

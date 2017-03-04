@@ -13,7 +13,7 @@
         android:layout_gravity="center"
         android:text="1"
         android:layout_margin="15dp"
-        android:textColor="@color/colorAccent"
+        android:textColor="?attr/colorAccent"
         android:textSize="18sp" />
 
     <RelativeLayout

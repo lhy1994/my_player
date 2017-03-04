@@ -2,7 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.liuhaoyuan.myplayer">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+
+    <uses-permission-sdk-23 android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission-sdk-23 android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -15,7 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,7 +31,7 @@
         </activity>
         <activity android:name=".LocalVideoActivity" />
         <activity
-            android:name=".VideoPlayActivity"
+            android:name=".activity.VideoPlayActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
@@ -71,12 +77,11 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name=".LocalMusicActivity" />
         <activity
-            android:name=".MusicPlayActivity"
+            android:name=".activity.MusicPlayActivity"
             android:launchMode="singleTask"
             android:theme="@style/Theme.Design.NoActionBar" />
 
-        <service android:name=".service.MusicPlayService" android:process="com.liuhaoyuan.myplayer.play">
-
+        <service android:name=".service.MusicPlayService">
             <intent-filter>
                 <action android:name="com.liuhaoyuan.myplayer.BIND_MUSIC_SERVICE" />
             </intent-filter>
@@ -84,13 +89,33 @@
 
         <activity android:name=".TestActivity" />
         <activity
-            android:name=".VideoDetailActivity"
+            android:name=".activity.VideoDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".VideoListActivity" />
+        <activity android:name=".activity.VideoListActivity" android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".SearchActivity"
+            android:name=".activity.SearchActivity"
             android:label="@string/title_activity_search"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+        <activity
+            android:name=".activity.SingerDetailActivity"
+            android:label="@string/title_activity_singer_detail"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.AlbumDetailActivity"
+            android:label="@string/title_activity_album_detail"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.RanksDetailActivity"
+            android:label="@string/title_activity_ranks_detail"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

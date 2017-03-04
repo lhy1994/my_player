@@ -6,7 +6,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TableLayout;
 
 import com.liuhaoyuan.myplayer.R;
 
@@ -31,7 +30,7 @@ public class VideoPager extends BasePager {
     @Override
     public View inintView() {
         title = "视频";
-        View view = View.inflate(activity, R.layout.pager_video, null);
+        View view = View.inflate(activity, R.layout.fragment_video, null);
         viewPager = (ViewPager) view.findViewById(R.id.vp_video);
         tableLayout = (TabLayout) view.findViewById(R.id.tl_video);
         return view;

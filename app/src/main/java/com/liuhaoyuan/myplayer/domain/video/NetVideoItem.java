@@ -1,5 +1,7 @@
 package com.liuhaoyuan.myplayer.domain.video;
 
+import android.graphics.drawable.Drawable;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;

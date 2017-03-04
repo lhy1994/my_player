@@ -147,7 +147,7 @@ public class LocalVideoActivity extends AppCompatActivity {
         public View getView(final int position, View view, ViewGroup viewGroup) {
             ViewHolder holder;
             if (view == null) {
-                view = View.inflate(LocalVideoActivity.this, R.layout.list_item_local_video, null);
+                view = View.inflate(LocalVideoActivity.this, R.layout.item_local_video, null);
                 holder = new ViewHolder();
                 holder.imageView = (ImageView) view.findViewById(R.id.iv_thumbnail_local_video);
                 holder.title = (TextView) view.findViewById(R.id.tv_title_local_video);

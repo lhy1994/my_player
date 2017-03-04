@@ -1,21 +1,15 @@
 package com.liuhaoyuan.myplayer.utils;
 
-import android.graphics.ImageFormat;
 import android.text.TextUtils;
 
-import com.liuhaoyuan.myplayer.domain.Lyric;
-
-import org.xutils.http.HttpTask;
+import com.liuhaoyuan.myplayer.domain.music.Lyric;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -60,7 +54,7 @@ public class LyricUtils {
 
         } else {
             lyrics = new ArrayList<>();
-            string = string.replace("&#10;", "#").replace("&#58;", ":").replace("&#46;", ".").replace("&#32;", " ").replace("&#45;", "-");
+            string = string.replace("&#10;", "#").replace("&#58;", ":").replace("&#46;", ".").replace("&#32;", " ").replace("&#45;", "-").replace("&#40;","(").replace("&#41;",")").replace("&#13;","").replace("&#39;","'");
             String[] strs = TextUtils.split(string, "#");
             String line;
             for (int i = 0; i < strs.length; i++) {

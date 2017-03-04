@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    >
+
+    <TextView
+        android:id="@+id/tv_ranks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="1"
+        android:textColor="?attr/colorAccent"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tv_song_name"
+        android:lines="1"
+        android:ellipsize="marquee"
+        android:layout_toRightOf="@id/tv_ranks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:layout_margin="12dp"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="15sp" />
+
+    <Button
+        android:id="@+id/btn_song_more"
+        android:layout_width="24dp"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_height="24dp"
+        android:background="@drawable/ic_action_more" />
+</RelativeLayout>

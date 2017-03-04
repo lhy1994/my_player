@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_hotmusic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="2dp"
+        android:layout_margin="4dp"
+        style="@style/CardView"
+        app:cardMaxElevation="8dp"
+        app:cardElevation="5dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/iv_hotmusic"
+                android:scaleType="centerCrop"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:src="@color/grey" />
+
+            <TextView
+                android:id="@+id/tv_hotmusic_name"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/iv_hotmusic"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="3dp"
+                android:ellipsize="end"
+                android:lines="1"
+                android:text="name"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_hotmusic_singer"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/tv_hotmusic_name"
+                android:layout_below="@+id/tv_hotmusic_name"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="0dp"
+                android:ellipsize="end"
+                android:lines="1"
+                android:text="singer"
+                android:textSize="14sp" />
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_hotmusic_more"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/iv_hotmusic"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/ic_action_more" />
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignBottom="@id/iv_hotmusic"
+                android:layout_alignRight="@id/iv_hotmusic"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/ic_action_play" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>

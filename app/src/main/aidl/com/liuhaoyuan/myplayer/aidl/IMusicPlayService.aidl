@@ -1,6 +1,6 @@
 // IMusicPlayService.aidl
 package com.liuhaoyuan.myplayer.aidl;
-
+import com.liuhaoyuan.myplayer.aidl.Song;
 // Declare any non-default types here with import statements
 
 interface IMusicPlayService {
@@ -40,4 +40,6 @@ interface IMusicPlayService {
     int getCurrentProgress();
 
     boolean isPlaying();
+
+    List<Song> getSongList();
 }

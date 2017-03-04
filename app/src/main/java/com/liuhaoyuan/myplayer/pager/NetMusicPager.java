@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -18,10 +17,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.liuhaoyuan.myplayer.MusicPlayActivity;
+import com.liuhaoyuan.myplayer.activity.MusicPlayActivity;
 import com.liuhaoyuan.myplayer.R;
-import com.liuhaoyuan.myplayer.domain.NetMusicInfo;
-import com.liuhaoyuan.myplayer.domain.Song;
+import com.liuhaoyuan.myplayer.domain.music.NetMusicInfo;
+import com.liuhaoyuan.myplayer.aidl.Song;
 
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
@@ -30,7 +29,7 @@ import org.xutils.x;
 import java.util.ArrayList;
 
 /**
- * Created by liuhaoyuan on 2016/7/26.
+ *
  */
 public class NetMusicPager extends BasePager {
     private int kindId;

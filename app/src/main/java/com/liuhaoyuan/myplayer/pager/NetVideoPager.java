@@ -1,28 +1,22 @@
 package com.liuhaoyuan.myplayer.pager;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.liuhaoyuan.myplayer.R;
-import com.liuhaoyuan.myplayer.VideoDetailActivity;
 import com.liuhaoyuan.myplayer.domain.video.NetVideoInfo;
 import com.liuhaoyuan.myplayer.domain.video.NetVideoItem;
 import com.liuhaoyuan.myplayer.view.RefreshListView;
 
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
-import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
 import java.util.ArrayList;
@@ -55,19 +49,19 @@ public class NetVideoPager extends BasePager {
 
     @Override
     public View inintView() {
-        View view = View.inflate(activity, R.layout.pager_net_video, null);
-        listView = (RefreshListView) view.findViewById(R.id.lv_net_video);
-        listView.setOnRefreshListener(new RefreshListView.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getDataFromServer();
-            }
-
-            @Override
-            public void onLoadMore() {
-                getMoreDataFromServer();
-            }
-        });
+        View view = View.inflate(activity, R.layout.fragment_video_list, null);
+//        listView = (RefreshListView) view.findViewById(R.id.lv_net_video);
+//        listView.setOnRefreshListener(new RefreshListView.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                getDataFromServer();
+//            }
+//
+//            @Override
+//            public void onLoadMore() {
+//                getMoreDataFromServer();
+//            }
+//        });
         return view;
     }
 
@@ -184,48 +178,48 @@ public class NetVideoPager extends BasePager {
         @Override
         public View getView(final int position, View view, ViewGroup viewGroup) {
             ViewHolder holder;
-            if (view==null){
-                view=View.inflate(activity,R.layout.list_item_net_video,null);
-                holder=new ViewHolder();
-
-                holder.name= (TextView) view.findViewById(R.id.tv_net_video_name);
-                holder.score= (TextView) view.findViewById(R.id.tv_net_video_score);
-                holder.actor= (TextView) view.findViewById(R.id.tv_net_video_actor);
-                holder.brief= (TextView) view.findViewById(R.id.tv_net_video_brief);
-                holder.imageView= (ImageView) view.findViewById(R.id.iv_net_video);
-                holder.more= (Button) view.findViewById(R.id.btn_net_video_more);
-
-                view.setTag(holder);
-            }else {
-                holder= (ViewHolder) view.getTag();
-            }
-            holder.name.setText(videoList.get(position).name);
-
-            String score=videoList.get(position).score;
-            holder.score.setText("评分 "+score.substring(0,score.indexOf(".")+2));
-
-            StringBuilder stringBuilder=new StringBuilder();
-            stringBuilder.append("主演：");
-            for (String s:videoList.get(position).performer){
-                stringBuilder.append(" "+s);
-            }
-            holder.actor.setText(stringBuilder.toString());
-
-            holder.brief.setText(videoList.get(position).brief);
-
-            final ImageOptions.Builder builder=new ImageOptions.Builder();
-            x.image().bind(holder.imageView,videoList.get(position).pic);
-
-            holder.more.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent=new Intent(activity, VideoDetailActivity.class);
-                    Bundle bundle=new Bundle();
-                    bundle.putSerializable("video_info",videoList.get(position));
-                    intent.putExtras(bundle);
-                    activity.startActivity(intent);
-                }
-            });
+//            if (view==null){
+//                view=View.inflate(activity,R.layout.item_video_list,null);
+//                holder=new ViewHolder();
+//
+//                holder.name= (TextView) view.findViewById(R.id.tv_net_video_name);
+//                holder.score= (TextView) view.findViewById(R.id.tv_net_video_score);
+//                holder.actor= (TextView) view.findViewById(R.id.tv_net_video_actor);
+//                holder.brief= (TextView) view.findViewById(R.id.tv_net_video_brief);
+//                holder.imageView= (ImageView) view.findViewById(R.id.iv_net_video);
+//                holder.more= (Button) view.findViewById(R.id.btn_net_video_more);
+//
+//                view.setTag(holder);
+//            }else {
+//                holder= (ViewHolder) view.getTag();
+//            }
+//            holder.name.setText(videoList.get(position).name);
+//
+//            String score=videoList.get(position).score;
+//            holder.score.setText("评分 "+score.substring(0,score.indexOf(".")+2));
+//
+//            StringBuilder stringBuilder=new StringBuilder();
+//            stringBuilder.append("主演：");
+//            for (String s:videoList.get(position).performer){
+//                stringBuilder.append(" "+s);
+//            }
+//            holder.actor.setText(stringBuilder.toString());
+//
+//            holder.brief.setText(videoList.get(position).brief);
+//
+//            final ImageOptions.Builder builder=new ImageOptions.Builder();
+//            x.image().bind(holder.imageView,videoList.get(position).pic);
+//
+//            holder.more.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Intent intent=new Intent(activity, VideoDetailActivity.class);
+//                    Bundle bundle=new Bundle();
+//                    bundle.putSerializable("video_info",videoList.get(position));
+//                    intent.putExtras(bundle);
+//                    activity.startActivity(intent);
+//                }
+//            });
             return view;
         }
     }

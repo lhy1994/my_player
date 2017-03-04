@@ -3,27 +3,27 @@ package com.liuhaoyuan.myplayer.service;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.widget.Toast;
 
-import com.liuhaoyuan.myplayer.MusicPlayActivity;
+import com.liuhaoyuan.myplayer.APP;
+import com.liuhaoyuan.myplayer.activity.MusicPlayActivity;
 import com.liuhaoyuan.myplayer.R;
 import com.liuhaoyuan.myplayer.aidl.IMusicPlayService;
-import com.liuhaoyuan.myplayer.domain.Song;
+import com.liuhaoyuan.myplayer.aidl.Song;
+import com.liuhaoyuan.myplayer.utils.ConstantValues;
+import com.liuhaoyuan.myplayer.utils.MusicUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -46,7 +46,7 @@ public class MusicPlayService extends Service {
     private int currentPosition;
 
     private MediaPlayer mediaPlayer;
-    private MediaPlayer.OnPreparedListener mOnpreparedListener = new MediaPlayer.OnPreparedListener() {
+    private MediaPlayer.OnPreparedListener mOnPreparedListener = new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mediaPlayer) {
             isCompletion = false;
@@ -56,7 +56,7 @@ public class MusicPlayService extends Service {
             sendBroadcast(intent);
         }
     };
-    private MediaPlayer.OnCompletionListener mOncompletionListener = new MediaPlayer.OnCompletionListener() {
+    private MediaPlayer.OnCompletionListener mOnCompletionListener = new MediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer mediaPlayer) {
             isCompletion = true;
@@ -71,22 +71,26 @@ public class MusicPlayService extends Service {
         }
     };
     private SharedPreferences preferences;
+    private boolean mPlaylistChanged;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        preferences = getSharedPreferences("config", MODE_PRIVATE);
-        mode = preferences.getInt("mode", REPEAT_MODE_NORMAL);
+        preferences = getSharedPreferences(ConstantValues.MUSIC_CONFIG, MODE_PRIVATE);
+        mode = preferences.getInt(ConstantValues.MUSIC_MODE, REPEAT_MODE_NORMAL);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        isRemotePlay = intent.getBooleanExtra("is_remote_play", false);
+//        isRemotePlay = intent.getBooleanExtra("is_remote_play", false);
 
-        Bundle bundle = intent.getExtras();
-        songList = (ArrayList<Song>) bundle.getSerializable("song_list");
-        if (songList != null) {
-            songListSize = songList.size();
+        mPlaylistChanged = intent.getBooleanExtra(ConstantValues.PLAYLIST_CHANGED, true);
+        if (mPlaylistChanged){
+            Bundle bundle = intent.getExtras();
+            songList = (ArrayList<Song>) bundle.getSerializable(ConstantValues.PLAYLIST);
+            if (songList != null) {
+                songListSize = songList.size();
+            }
         }
         return super.onStartCommand(intent, flags, startId);
     }
@@ -188,6 +192,11 @@ public class MusicPlayService extends Service {
             return service.isplaying();
         }
 
+        @Override
+        public List<Song> getSongList() throws RemoteException {
+            return songList;
+        }
+
     };
 
     private void openAudio(int position) {
@@ -200,8 +209,8 @@ public class MusicPlayService extends Service {
         }
 
         mediaPlayer = new MediaPlayer();
-        mediaPlayer.setOnPreparedListener(mOnpreparedListener);
-        mediaPlayer.setOnCompletionListener(mOncompletionListener);
+        mediaPlayer.setOnPreparedListener(mOnPreparedListener);
+        mediaPlayer.setOnCompletionListener(mOnCompletionListener);
         mediaPlayer.setOnErrorListener(mOnErrorListener);
 
         try {
@@ -212,21 +221,21 @@ public class MusicPlayService extends Service {
         }
     }
 
-    private String s = null;
 
     private void play() {
         if (mediaPlayer != null) {
             mediaPlayer.start();
         }
-
-//        System.out.println(s.length());
+        MusicUtils.HAS_PLAYLIST=true;
 
         Intent intent = new Intent(this, MusicPlayActivity.class);
-        intent.putExtra("from_notifation", true);
-        intent.putExtra("is_remote_play", isRemotePlay);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("song_list", songList);
-        intent.putExtras(bundle);
+        intent.putExtra(ConstantValues.PLAYLIST_CHANGED,false);
+//        intent.putExtra("from_notifation", true);
+//        intent.putExtra("is_remote_play", isRemotePlay);
+
+//        Bundle bundle = new Bundle();
+//        bundle.putSerializable("song_list", songList);
+//        intent.putExtras(bundle);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
         Notification.Builder builder = new Notification.Builder(this).setContentText("正在播放 " + getTitle());
         builder.setContentTitle("Myplayer");
@@ -254,7 +263,7 @@ public class MusicPlayService extends Service {
 
     private void setMode(int mode) {
         this.mode = mode;
-        preferences.edit().putInt("mode", mode).apply();
+        preferences.edit().putInt(ConstantValues.MUSIC_MODE, mode).apply();
     }
 
     private int getMode() {

@@ -28,21 +28,25 @@
                 android:layout_height="24dp"
                 android:layout_margin="15dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/scan_finish_btn_return" />
+                android:src="@drawable/ic_arrow_back_white_24dp" />
 
             <TextView
                 android:id="@+id/tv_music_play_title"
-                android:layout_width="wrap_content"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@id/btn_music_back"
                 android:layout_toRightOf="@id/btn_music_back"
                 android:text="Music Title"
+                android:maxLines="2"
+                android:ellipsize="end"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/tv_music_play_artist"
-                android:layout_width="wrap_content"
+                android:layout_width="250dp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_music_play_title"
                 android:layout_marginTop="5dp"
@@ -58,7 +62,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_margin="15dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/bj_fx" />
+                android:src="@drawable/ic_share_white_24dp" />
         </RelativeLayout>
 
         <LinearLayout
@@ -117,14 +121,14 @@
             <SeekBar
                 android:id="@+id/sb_music_play"
                 style="@style/MediaController_SeekBar"
-                android:thumbTint="@color/colorPrimary"
+                android:thumbTint="?attr/colorPrimary"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
-                android:progressTint="@color/colorAccent" />
+                android:progressTint="?attr/colorAccent" />
 
             <TextView
                 android:id="@+id/tv_music_play_duration"

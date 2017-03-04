@@ -1,6 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="primaryTextColor">#212121</color>
+    <color name="secondaryTextColor">#757575</color>
+    <color name="dividerColor">#BDBDBD</color>
+    <color name="tabTextColor">#afff</color>
+    <color name="tabSelectedTextColor">#fff</color>
+    <color name="navColor">#515151</color>
+
+    <color name="pinkAccent">#FF4081</color>
+    <color name="yellowAccent">#FFEB3B</color>
+    <color name="limeAccent">#CDDC39</color>
+    <color name="lightGreenAccent">#8BC34A</color>
+    <color name="amberAccent">#FFC107</color>
+    <color name="purpleAccent">#E040FB</color>
+    <color name="brownAccent">#795548</color>
+    <color name="orangeAccent">#FF9800</color>
+    <color name="deepPurpleAccent">#7C4DFF</color>
+    <color name="cyanAccent">#00BCD4</color>
+
+
+    <color name="indigoPrimary">#3F51B5</color>
+    <color name="indigoPrimaryDark">#303F9F</color>
+
+    <color name="pinkPrimary">#E91E63</color>
+    <color name="pinkPrimaryDark">#C2185B</color>
+
+    <color name="cyanPrimary">#00BCD4</color>
+    <color name="cyanPrimaryDark">#0097A7</color>
+
+    <color name="purplePrimary">#9C27B0</color>
+    <color name="purplePrimaryDark">#7B1FA2</color>
+
+    <color name="greyLight">#F5F5F5</color>
+    <color name="grey">#9e9e9e</color>
+
+    <color name="redPrimary">#F44336</color>
+    <color name="redPrimaryDark">#D32F2F</color>
+
+    <color name="deepPurplePrimary">#673AB7</color>
+    <color name="deepPurplePrimaryDark">#512DA8</color>
+
+    <color name="orangePrimary">#FF9800</color>
+    <color name="orangePrimaryDark">#F57C00</color>
+
+    <color name="lightGreenPrimary">#8BC34A</color>
+    <color name="lightGreenPrimaryDark">#689F38</color>
+
+    <color name="greenPrimary">#4CAF50</color>
+    <color name="greenPrimaryDark">#388E3C</color>
+
+    <color name="tealPrimary">#009688</color>
+    <color name="tealPrimaryDark">#00796B</color>
+
+    <color name="yellowPrimary">#FFEB3B</color>
+    <color name="yellowPrimaryDark">#FBC02D</color>
+
+    <color name="brownPrimary">#795548</color>
+    <color name="brownPrimaryDark">#5D4037</color>
+
+    <color name="greyPrimary">#9E9E9E</color>
+    <color name="greyPrimaryDark">#616161</color>
+
+    <color name="bluePrimary">#2196F3</color>
+    <color name="bluePrimaryDark">#1976D2</color>
+
+    <color name="lightBluePrimary">#03A9F4</color>
+    <color name="lightBluePrimaryDark">#0288D1</color>
+
+    <color name="limePrimary">#CDDC39</color>
+    <color name="limePrimaryDark">#AFB42B</color>
+
+    <color name="amberPrimary">#FFC107</color>
+    <color name="amberPrimaryDark">#FFA000</color>
+
+    <color name="blueGreyPrimary">#607D8B</color>
+    <color name="blueGreyPrimaryDark">#455A64</color>
 </resources>

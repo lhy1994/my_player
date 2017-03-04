@@ -4,16 +4,11 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Environment;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.TextView;
 
-import com.liuhaoyuan.myplayer.domain.Lyric;
-import com.liuhaoyuan.myplayer.utils.LyricUtils;
+import com.liuhaoyuan.myplayer.domain.music.Lyric;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
