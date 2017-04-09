@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -17,10 +18,9 @@ import android.widget.TextView;
 
 import com.liuhaoyuan.myplayer.R;
 import com.liuhaoyuan.myplayer.activity.SingerDetailActivity;
-import com.liuhaoyuan.myplayer.db.FavoriteDbUtils;
+import com.liuhaoyuan.myplayer.db.FavoriteDbManager;
 import com.liuhaoyuan.myplayer.domain.music.Singer;
 import com.liuhaoyuan.myplayer.utils.ConstantValues;
-import com.liuhaoyuan.myplayer.utils.MusicUtils;
 
 import org.xutils.image.ImageOptions;
 import org.xutils.x;
@@ -92,7 +92,7 @@ public class FavoriteSingerFragment extends BaseFragment {
                                 intent.putExtra(ConstantValues.ARTIST_LOGO, mData.get(position).singerPic);
                                 startActivity(intent);
                             }else if (itemId==R.id.menu_delete){
-                                FavoriteDbUtils dbUtils = FavoriteDbUtils.getInstance(getContext());
+                                FavoriteDbManager dbUtils = FavoriteDbManager.getInstance(getContext());
                                 dbUtils.deleteSinger(mData.get(position).singerId);
                                 mData.remove(position);
                                 notifyDataSetChanged();
@@ -103,7 +103,7 @@ public class FavoriteSingerFragment extends BaseFragment {
                     popupMenu.show();
                 }
             });
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
+            holder.frameLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent=new Intent(getContext(), SingerDetailActivity.class);
@@ -126,9 +126,11 @@ public class FavoriteSingerFragment extends BaseFragment {
         private ImageView imageView;
         private TextView nameTv;
         private Button moreBtn;
+        private final FrameLayout frameLayout;
 
         public SingerViewHolder(View itemView) {
             super(itemView);
+            frameLayout = (FrameLayout) itemView.findViewById(R.id.fl_container);
             imageView = (ImageView) itemView.findViewById(R.id.iv_singer);
             nameTv = (TextView) itemView.findViewById(R.id.tv_singer_name);
             moreBtn = (Button) itemView.findViewById(R.id.btn_singer_more);
@@ -139,7 +141,7 @@ public class FavoriteSingerFragment extends BaseFragment {
 
         @Override
         protected ArrayList<Singer> doInBackground(Context... params) {
-            FavoriteDbUtils dbUtils = FavoriteDbUtils.getInstance(params[0]);
+            FavoriteDbManager dbUtils = FavoriteDbManager.getInstance(params[0]);
             ArrayList<Singer> singers = dbUtils.queryAllSinger();
             return singers;
         }

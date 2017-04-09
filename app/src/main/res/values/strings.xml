@@ -114,6 +114,7 @@
     <string name="search_hint">hint</string>
     <string name="transition_video_pic">videoPic</string>
     <string name="transition_singer_pic">singerPic</string>
+    <string name="transition_rank_pic">rankPic</string>
     <string name="title_activity_theme">Settings</string>
 
     <!-- Strings related to Settings -->

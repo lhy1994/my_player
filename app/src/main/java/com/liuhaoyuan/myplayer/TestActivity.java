@@ -9,6 +9,12 @@ import android.widget.Toast;
 import com.liuhaoyuan.myplayer.api.DataObserver;
 import com.liuhaoyuan.myplayer.api.MusicApi;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Map;
+import java.util.TreeMap;
+
 
 public class TestActivity extends AppCompatActivity {
 

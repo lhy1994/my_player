@@ -1,5 +1,7 @@
 package com.liuhaoyuan.myplayer.utils;
 
+import android.text.TextUtils;
+
 /**
  * Created by liuhaoyuan on 2016/11/29.
  */
@@ -69,5 +71,29 @@ public class VideoUtils {
             default:
                 return "未知站点";
         }
+    }
+
+    public static String formatNum(String num){
+        if (TextUtils.isEmpty(num)){
+            return num;
+        }
+        Long value = Long.valueOf(num);
+        if (value>10000){
+            value=value/10000;
+            return value+"万"+"+";
+        }else {
+            return num;
+        }
+    }
+
+    public static String formatScore(String score){
+        if (TextUtils.isEmpty(score)){
+            return score;
+        }
+        int index=score.indexOf(".");
+        if (index>0){
+            score=score.substring(0,index+2);
+        }
+        return score;
     }
 }

@@ -43,6 +43,7 @@ import com.liuhaoyuan.myplayer.R;
 import com.liuhaoyuan.myplayer.TestActivity;
 import com.liuhaoyuan.myplayer.fragment.DownloadFragment;
 import com.liuhaoyuan.myplayer.fragment.FavoriteFragment;
+import com.liuhaoyuan.myplayer.fragment.HistoryFragment;
 import com.liuhaoyuan.myplayer.fragment.LocalFragment;
 import com.liuhaoyuan.myplayer.fragment.MusicFragment;
 import com.liuhaoyuan.myplayer.fragment.ThemeFragment;
@@ -106,6 +107,7 @@ public class MainActivity extends AppCompatActivity
         MusicFragment musicFragment = (MusicFragment) getFragment(R.id.nav_music);
         transaction.replace(R.id.fl_main, musicFragment);
         transaction.commit();
+        navigationView.setCheckedItem(R.id.nav_music);
         setTitle("Music");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -161,6 +163,10 @@ public class MainActivity extends AppCompatActivity
                 case R.id.nav_favorite:
                     fragment = new FavoriteFragment();
                     fragmentHashMap.put(R.id.nav_favorite, fragment);
+                    break;
+                case R.id.nav_history:
+                    fragment=new HistoryFragment();
+                    fragmentHashMap.put(R.id.nav_history,fragment);
                     break;
                 case R.id.nav_theme:
                     fragment=new ThemeFragment();
@@ -267,6 +273,9 @@ public class MainActivity extends AppCompatActivity
                         break;
                     case R.id.nav_favorite:
                         setTitle("Favorite");
+                        break;
+                    case R.id.nav_history:
+                        setTitle("History");
                         break;
                     case R.id.nav_theme:
                         setTitle("Theme");

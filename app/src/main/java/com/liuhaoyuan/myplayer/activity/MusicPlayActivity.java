@@ -31,10 +31,14 @@ import com.liuhaoyuan.myplayer.R;
 import com.liuhaoyuan.myplayer.aidl.IMusicPlayService;
 import com.liuhaoyuan.myplayer.api.DataObserver;
 import com.liuhaoyuan.myplayer.api.MusicApi;
+import com.liuhaoyuan.myplayer.db.HistoryDbManager;
+import com.liuhaoyuan.myplayer.domain.music.Lyric;
 import com.liuhaoyuan.myplayer.domain.music.NetLyricInfo;
 import com.liuhaoyuan.myplayer.aidl.Song;
+import com.liuhaoyuan.myplayer.manager.ThreadPoolManger;
 import com.liuhaoyuan.myplayer.service.MusicPlayService;
 import com.liuhaoyuan.myplayer.utils.ConstantValues;
+import com.liuhaoyuan.myplayer.utils.LogUtils;
 import com.liuhaoyuan.myplayer.utils.LyricUtils;
 import com.liuhaoyuan.myplayer.utils.TimeFormatUtils;
 import com.liuhaoyuan.myplayer.view.LyicTextView;
@@ -42,6 +46,7 @@ import com.liuhaoyuan.myplayer.view.LyicTextView;
 import org.xutils.x;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by liuhaoyuan on 2016/7/24.
@@ -175,7 +180,7 @@ public class MusicPlayActivity extends AppCompatActivity {
     private void initSongList() {
         Intent intent = getIntent();
         mPlaylisChanged = intent.getBooleanExtra(ConstantValues.PLAYLIST_CHANGED, true);
-        if (mPlaylisChanged){
+        if (mPlaylisChanged) {
             mCurrentPosition = intent.getIntExtra(ConstantValues.MUSIC_CURRENT_POSITION, 0);
             Bundle bundle = intent.getExtras();
             mSongList = (ArrayList<Song>) bundle.getSerializable(ConstantValues.PLAYLIST);
@@ -200,9 +205,9 @@ public class MusicPlayActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (!mPlaylisChanged){
+            if (!mPlaylisChanged) {
                 try {
-                    mSongList= (ArrayList<Song>) musicService.getSongList();
+                    mSongList = (ArrayList<Song>) musicService.getSongList();
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -210,6 +215,14 @@ public class MusicPlayActivity extends AppCompatActivity {
             initListener();
             getInfo();
             initLyric();
+//            if (mSongList != null && mSongList.get(mCurrentPosition) != null)
+//                LogUtils.e(this, mSongList.get(mCurrentPosition).toString());
+//            ThreadPoolManger.getInstance().execute(new Runnable() {
+//                @Override
+//                public void run() {
+//                    HistoryDbManager.getInstance(getApplicationContext()).addMusicHistory(mSongList.get(mCurrentPosition));
+//                }
+//            });
         }
     }
 
@@ -220,8 +233,8 @@ public class MusicPlayActivity extends AppCompatActivity {
         intent.setPackage(getPackageName());
 
 //        intent.putExtra("is_remote_play", isRemotePlay);
-        intent.putExtra(ConstantValues.PLAYLIST_CHANGED,mPlaylisChanged);
-        if (mPlaylisChanged){
+        intent.putExtra(ConstantValues.PLAYLIST_CHANGED, mPlaylisChanged);
+        if (mPlaylisChanged) {
             Bundle bundle = new Bundle();
             bundle.putSerializable(ConstantValues.PLAYLIST, mSongList);
             intent.putExtras(bundle);
@@ -353,64 +366,53 @@ public class MusicPlayActivity extends AppCompatActivity {
     }
 
     private void initLyric() {
-        if (mSongList != null) {
+        lyicTextView.setLyrics(null);
+        if (mSongList != null && mSongList.size() > 0) {
             String songId = mSongList.get(mCurrentPosition).songid;
-            MusicApi qqMusicApi = MusicApi.getInstance();
-            qqMusicApi.registerObserver(new DataObserver<String>(DataObserver.TYPE_LYRIC) {
-                @Override
-                public void onComplete(String data) {
-                    if (!TextUtils.isEmpty(data)){
-                        LyricUtils lyricUtils = new LyricUtils();
-                        lyricUtils.readLyricString(data);
-                        lyicTextView.setLyrics(lyricUtils.getLyrics());
-                    }
-                }
-            });
-            qqMusicApi.getLyric(songId);
-//            RequestParams requestParams = new RequestParams("https://route.showapi.com/213-2?" + "&showapi_sign=" + SECRET + "&showapi_appid=" + APPID + "&musicid=" + musicid);
-//            Log.e("test", "https://route.showapi.com/213-2?" + "&showapi_sign=" + SECRET + "&showapi_appid=" + APPID + "&musicid=" + musicid);
-//            x.http().get(requestParams, new Callback.CommonCallback<String>() {
-//                @Override
-//                public void onSuccess(String result) {
-//                    parseLyric(result);
-//                }
-//
-//                @Override
-//                public void onError(Throwable ex, boolean isOnCallback) {
-//                    Log.e("test", "no lyric find");
-//                }
-//
-//                @Override
-//                public void onCancelled(CancelledException cex) {
-//
-//                }
-//
-//                @Override
-//                public void onFinished() {
-//
-//                }
-//            });
+            if (TextUtils.isEmpty(songId)) {
+                searchMoreLyrics(mSongList.get(mCurrentPosition).songname);
+            } else {
+                searchLyric(songId);
+            }
         }
     }
 
-    private void parseLyric(String result) {
-        Gson gson = new Gson();
-        NetLyricInfo netLyricInfo = gson.fromJson(result, NetLyricInfo.class);
-        String lyric = netLyricInfo.showapi_res_body.lyric;
+    private void searchMoreLyrics(String songName) {
+        MusicApi api = MusicApi.getInstance();
+        api.registerObserver(new DataObserver<ArrayList<Song>>(DataObserver.TYPE_SONG) {
+            @Override
+            public void onComplete(ArrayList<Song> data) {
+                if (data != null && data.size() > 0) {
+                    searchLyric(data.get(0).songid);
+                }
+            }
+        });
+        api.getSong(songName, "1");
+    }
 
-        LyricUtils lyricUtils = new LyricUtils();
-        lyricUtils.readLyricString(lyric);
-        lyicTextView.setLyrics(lyricUtils.getLyrics());
+    private void searchLyric(String songId) {
+        MusicApi qqMusicApi = MusicApi.getInstance();
+        qqMusicApi.registerObserver(new DataObserver<String>(DataObserver.TYPE_LYRIC) {
+            @Override
+            public void onComplete(String data) {
+                if (!TextUtils.isEmpty(data)) {
+                    LyricUtils lyricUtils = new LyricUtils();
+                    lyricUtils.readLyricString(data);
+                    lyicTextView.setLyrics(lyricUtils.getLyrics());
+                }
+            }
+        });
+        qqMusicApi.getLyric(songId);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mReceiver!=null){
+        if (mReceiver != null) {
             unregisterReceiver(mReceiver);
             mReceiver = null;
         }
-        if (mConn!=null){
+        if (mConn != null) {
             unbindService(mConn);
         }
         isDestoryed = true;
@@ -483,9 +485,6 @@ public class MusicPlayActivity extends AppCompatActivity {
             }
         }
     }
-
-
-
 
 
 }

@@ -315,8 +315,11 @@ public class SearchActivity extends AppCompatActivity {
                 viewHolder.showBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(SearchActivity.this, VideoListActivity.class);
-                        intent.putExtra("video_id", shows.get(position).id);
+                        Intent intent = new Intent(SearchActivity.this, VideoDetailActivity.class);
+//                        intent.putExtra("video_id", shows.get(position).id);
+                        Bundle bundle=new Bundle();
+                        bundle.putString(ConstantValues.VIDEO_ID,shows.get(position).id);
+                        intent.putExtras(bundle);
                         startActivity(intent);
                     }
                 });

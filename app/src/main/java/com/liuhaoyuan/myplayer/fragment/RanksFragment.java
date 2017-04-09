@@ -1,5 +1,6 @@
 package com.liuhaoyuan.myplayer.fragment;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -50,7 +51,7 @@ public class RanksFragment extends BaseFragment {
         }
 
         @Override
-        public void onBindViewHolder(RankViewHolder holder, final int position) {
+        public void onBindViewHolder(final RankViewHolder holder, final int position) {
             holder.imageView.setImageResource(images[position]);
             holder.nameTv.setText(titles[position]);
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -60,7 +61,13 @@ public class RanksFragment extends BaseFragment {
                     intent.putExtra("rankName",titles[position]);
                     intent.putExtra("rankPic",images[position]);
                     intent.putExtra("rankId",topIds[position]);
-                    startActivity(intent);
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(getActivity(), holder.imageView, getString(R.string.transition_rank_pic));
+                        startActivity(intent, options.toBundle());
+                    } else {
+                        startActivity(intent);
+                    }
+//                    startActivity(intent);
                 }
             });
         }

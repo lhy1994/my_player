@@ -21,7 +21,7 @@ public class ConstantValues {
 
     public static final String VIDEO_TYPE="video_type";
     public static final String VIDEO_PIC="video_pic";
-    public static final String VIDEO_INFO="video_info";
+    public static final String VIDEO_ID ="video_info";
 
     public static final String ACTION_CHANGE_THEME="action_change_theme";
 

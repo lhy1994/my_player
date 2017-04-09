@@ -13,7 +13,6 @@ import android.provider.MediaStore;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,11 +22,9 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import com.liuhaoyuan.myplayer.LocalVideoActivity;
 import com.liuhaoyuan.myplayer.R;
-import com.liuhaoyuan.myplayer.VitamioPlayActivity;
+import com.liuhaoyuan.myplayer.activity.VitamioPlayActivity;
 import com.liuhaoyuan.myplayer.domain.video.VideoInfo;
-import com.liuhaoyuan.myplayer.utils.MusicUtils;
 import com.liuhaoyuan.myplayer.utils.TimeFormatUtils;
 
 import java.util.ArrayList;

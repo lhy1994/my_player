@@ -29,7 +29,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LocalVideoActivity" />
         <activity
             android:name=".activity.VideoPlayActivity"
             android:screenOrientation="landscape"
@@ -71,11 +70,10 @@
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".VitamioPlayActivity"
+            android:name=".activity.VitamioPlayActivity"
             android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".LocalMusicActivity" />
         <activity
             android:name=".activity.MusicPlayActivity"
             android:launchMode="singleTask"

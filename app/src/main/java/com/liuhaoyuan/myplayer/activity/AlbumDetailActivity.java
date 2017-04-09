@@ -1,6 +1,5 @@
 package com.liuhaoyuan.myplayer.activity;
 
-import android.app.Application;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -22,7 +21,7 @@ import com.liuhaoyuan.myplayer.R;
 import com.liuhaoyuan.myplayer.api.DataObserver;
 import com.liuhaoyuan.myplayer.api.MusicApi;
 import com.liuhaoyuan.myplayer.aidl.Song;
-import com.liuhaoyuan.myplayer.db.FavoriteDbUtils;
+import com.liuhaoyuan.myplayer.db.FavoriteDbManager;
 import com.liuhaoyuan.myplayer.domain.music.XiaMiAlbumSongsInfo;
 import com.liuhaoyuan.myplayer.domain.music.XiaMiArtistAlbumInfo;
 import com.liuhaoyuan.myplayer.utils.ConstantValues;
@@ -145,7 +144,7 @@ public class AlbumDetailActivity extends AppCompatActivity {
                                     MusicUtils.playMusic(AlbumDetailActivity.this,position,true,mSongList);
                                     break;
                                 case R.id.menu_favorite:
-                                    FavoriteDbUtils dbUtils = FavoriteDbUtils.getInstance(AlbumDetailActivity.this);
+                                    FavoriteDbManager dbUtils = FavoriteDbManager.getInstance(AlbumDetailActivity.this);
                                     Song song = mSongList.get(position);
                                     dbUtils.insertSong(song.songid,song.songname,song.singername,song.url,song.albumpic_big);
                                     final Snackbar snackbar=Snackbar.make(v,"收藏成功",Snackbar.LENGTH_LONG);

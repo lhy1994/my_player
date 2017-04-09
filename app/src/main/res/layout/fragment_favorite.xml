@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:tabBackground="?attr/colorPrimary"
+        app:tabBackground="?android:attr/selectableItemBackground"
         app:tabGravity="fill"
         app:tabMode="fixed"
         app:tabSelectedTextColor="@color/tabSelectedTextColor"

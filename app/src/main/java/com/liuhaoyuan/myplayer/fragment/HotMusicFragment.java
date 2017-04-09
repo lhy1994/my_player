@@ -3,7 +3,6 @@ package com.liuhaoyuan.myplayer.fragment;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatSpinner;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,7 +21,9 @@ import com.liuhaoyuan.myplayer.R;
 import com.liuhaoyuan.myplayer.api.DataObserver;
 import com.liuhaoyuan.myplayer.api.MusicApi;
 import com.liuhaoyuan.myplayer.aidl.Song;
-import com.liuhaoyuan.myplayer.db.FavoriteDbUtils;
+import com.liuhaoyuan.myplayer.db.FavoriteDbManager;
+import com.liuhaoyuan.myplayer.db.HistoryDbManager;
+import com.liuhaoyuan.myplayer.manager.ThreadPoolManger;
 import com.liuhaoyuan.myplayer.utils.MusicUtils;
 
 import org.xutils.image.ImageOptions;
@@ -136,7 +138,7 @@ public class HotMusicFragment extends BaseFragment {
             x.image().bind(holder.imageView, data.get(position).albumpic_big,imageOptions);
             holder.nameTv.setText(data.get(position).songname);
             holder.singerTv.setText(data.get(position).singername);
-            holder.imageView.setOnClickListener(new View.OnClickListener() {
+            holder.frameLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                    MusicUtils.playMusic(getContext(),position,true,data);
@@ -155,7 +157,7 @@ public class HotMusicFragment extends BaseFragment {
                                     MusicUtils.playMusic(getContext(),position,true,data);
                                     break;
                                 case R.id.menu_favorite:
-                                    FavoriteDbUtils dbUtils = FavoriteDbUtils.getInstance(getContext());
+                                    FavoriteDbManager dbUtils = FavoriteDbManager.getInstance(getContext());
                                     Song song = mData.get(position);
                                     dbUtils.insertSong(song.songid,song.songname,song.singername,song.url,song.albumpic_big);
                                     final Snackbar snackbar=Snackbar.make(v,"收藏成功",Snackbar.LENGTH_LONG);
@@ -182,9 +184,11 @@ public class HotMusicFragment extends BaseFragment {
         private TextView nameTv;
         private TextView singerTv;
         private AppCompatButton button;
+        private  FrameLayout frameLayout;
 
         public ViewHolder(View itemView) {
             super(itemView);
+            frameLayout = (FrameLayout) itemView.findViewById(R.id.fl_container);
             imageView = (ImageView) itemView.findViewById(R.id.iv_hotmusic);
             nameTv = (TextView) itemView.findViewById(R.id.tv_hotmusic_name);
             singerTv = (TextView) itemView.findViewById(R.id.tv_hotmusic_singer);

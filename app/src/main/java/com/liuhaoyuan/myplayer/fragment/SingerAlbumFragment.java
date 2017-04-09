@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,6 +23,7 @@ import com.liuhaoyuan.myplayer.api.DataObserver;
 import com.liuhaoyuan.myplayer.api.MusicApi;
 import com.liuhaoyuan.myplayer.domain.music.XiaMiArtistAlbumInfo;
 import com.liuhaoyuan.myplayer.utils.ConstantValues;
+import com.liuhaoyuan.myplayer.utils.ImageUtils;
 
 import org.xutils.common.Callback;
 import org.xutils.image.ImageOptions;
@@ -162,12 +164,17 @@ public class SingerAlbumFragment extends BaseFragment {
 
                 @Override
                 public void onSuccess(Drawable result) {
-                    int defaultColor = getResources().getColor(R.color.pinkPrimary);
                     BitmapDrawable drawable = (BitmapDrawable) result;
                     Bitmap bitmap = drawable.getBitmap();
-                    Palette palette = Palette.from(bitmap).generate();
-                    int dominantColor = palette.getDominantColor(defaultColor);
-                    holder.cardView.setCardBackgroundColor(palette.getVibrantColor(dominantColor));
+                    ImageUtils.getDominantColor(bitmap, new ImageUtils.PaletteCallBack() {
+                        @Override
+                        public void onColorGenerated(int color, int textColor) {
+                            holder.cardView.setCardBackgroundColor(color);
+                            holder.albumCompanyTv.setTextColor(textColor);
+                            holder.albumNameTv.setTextColor(textColor);
+                            holder.albumTimeTv.setTextColor(textColor);
+                        }
+                    });
                 }
 
                 @Override

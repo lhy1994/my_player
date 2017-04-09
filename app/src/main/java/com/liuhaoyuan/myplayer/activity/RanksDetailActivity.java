@@ -1,6 +1,7 @@
 package com.liuhaoyuan.myplayer.activity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -10,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.transition.AutoTransition;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,7 +25,7 @@ import com.liuhaoyuan.myplayer.R;
 import com.liuhaoyuan.myplayer.api.DataObserver;
 import com.liuhaoyuan.myplayer.api.MusicApi;
 import com.liuhaoyuan.myplayer.aidl.Song;
-import com.liuhaoyuan.myplayer.db.FavoriteDbUtils;
+import com.liuhaoyuan.myplayer.db.FavoriteDbManager;
 import com.liuhaoyuan.myplayer.utils.MusicUtils;
 
 import org.xutils.x;
@@ -42,6 +44,16 @@ public class RanksDetailActivity extends AppCompatActivity {
         APP application = (APP) getApplication();
         int currentTheme = application.getCurrentTheme();
         setTheme(currentTheme);
+
+        // 设置一个exit transition
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setAllowEnterTransitionOverlap(true);
+            getWindow().setExitTransition(new AutoTransition());//new Slide()  new Fade()
+            getWindow().setEnterTransition(new AutoTransition());
+            getWindow().setSharedElementEnterTransition(new AutoTransition());
+            getWindow().setSharedElementExitTransition(new AutoTransition());
+        }
+
         setContentView(R.layout.activity_ranks_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -113,13 +125,14 @@ public class RanksDetailActivity extends AppCompatActivity {
 
         @Override
         public SongViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_rank_songs, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_ranks_songs, parent, false);
             SongViewHolder songViewHolder = new SongViewHolder(view);
             return songViewHolder;
         }
 
         @Override
         public void onBindViewHolder(SongViewHolder holder, final int position) {
+            holder.rankTv.setText((position+1)+"");
             x.image().bind(holder.imageView, data.get(position).albumpic_small);
             holder.nameTV.setText(data.get(position).songname);
             holder.singerTv.setText(data.get(position).singername);
@@ -136,7 +149,7 @@ public class RanksDetailActivity extends AppCompatActivity {
                                     MusicUtils.playMusic(RanksDetailActivity.this, position, true, data);
                                     break;
                                 case R.id.menu_favorite:
-                                    FavoriteDbUtils dbUtils = FavoriteDbUtils.getInstance(RanksDetailActivity.this);
+                                    FavoriteDbManager dbUtils = FavoriteDbManager.getInstance(RanksDetailActivity.this);
                                     Song song = data.get(position);
                                     dbUtils.insertSong(song.songid,song.songname,song.singername,song.url,song.albumpic_big);
                                     final Snackbar snackbar=Snackbar.make(v,"收藏成功",Snackbar.LENGTH_LONG);
@@ -175,9 +188,11 @@ public class RanksDetailActivity extends AppCompatActivity {
         private final TextView nameTV;
         private final TextView singerTv;
         private final Button moreBtn;
+        private final TextView rankTv;
 
         public SongViewHolder(View itemView) {
             super(itemView);
+            rankTv = (TextView) itemView.findViewById(R.id.tv_rank);
             imageView = (ImageView) itemView.findViewById(R.id.iv_rank_song);
             nameTV = (TextView) itemView.findViewById(R.id.tv_song_name);
             singerTv = (TextView) itemView.findViewById(R.id.tv_singer);

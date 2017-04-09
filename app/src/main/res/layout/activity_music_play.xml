@@ -115,12 +115,11 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="10dp"
-                android:text="03:00:00"
+                android:text="00:00:00"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
             <SeekBar
                 android:id="@+id/sb_music_play"
-                style="@style/MediaController_SeekBar"
                 android:thumbTint="?attr/colorPrimary"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -128,6 +127,8 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
+                style="@style/Widget.AppCompat.SeekBar"
+                android:progressBackgroundTint="?attr/colorAccent"
                 android:progressTint="?attr/colorAccent" />
 
             <TextView

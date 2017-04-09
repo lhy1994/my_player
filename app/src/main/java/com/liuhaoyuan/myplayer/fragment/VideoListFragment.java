@@ -3,6 +3,7 @@ package com.liuhaoyuan.myplayer.fragment;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -22,18 +23,18 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.liuhaoyuan.myplayer.R;
-import com.liuhaoyuan.myplayer.activity.MusicPlayActivity;
 import com.liuhaoyuan.myplayer.activity.VideoDetailActivity;
-import com.liuhaoyuan.myplayer.domain.video.NetVideoInfo;
-import com.liuhaoyuan.myplayer.domain.video.NetVideoItem;
+import com.liuhaoyuan.myplayer.domain.video.YouKuShowInfo;
 import com.liuhaoyuan.myplayer.utils.ConstantValues;
+import com.liuhaoyuan.myplayer.utils.ImageUtils;
+import com.liuhaoyuan.myplayer.utils.VideoUtils;
 
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by hyliu on 2017/1/22.
@@ -43,7 +44,7 @@ public class VideoListFragment extends BaseFragment {
     private static final String APPKEY = "66c85262ac2869e8";
     private int mCurrentPage = 0;
     private String mVideoType;
-    private ArrayList<NetVideoItem> mData;
+    private List<YouKuShowInfo.ShowsBean> mData;
     private XRecyclerView mRecyclerView;
     private VideoAdapter mAdapter;
 
@@ -88,11 +89,9 @@ public class VideoListFragment extends BaseFragment {
     }
 
     public void getDataFromServer(final boolean isInit, final boolean isRefresh) {
-        RequestParams requestParams = new RequestParams("https://openapi.youku.com/v2/searches/show/top_unite.json");
+        RequestParams requestParams = new RequestParams("https://openapi.youku.com/v2/shows/by_category.json");
         requestParams.addParameter("client_id", APPKEY);
         requestParams.addParameter("category", mVideoType);
-        requestParams.addParameter("headnum", "1");
-        requestParams.addParameter("tailnum", "1");
         requestParams.addParameter("page", (mCurrentPage + 1) + "");
 
         x.http().get(requestParams, new Callback.CommonCallback<String>() {
@@ -120,22 +119,21 @@ public class VideoListFragment extends BaseFragment {
 
     private void parseData(String result, boolean isInit, boolean isRefresh) {
         Gson gson = new Gson();
-        NetVideoInfo netVideoInfo = gson.fromJson(result, NetVideoInfo.class);
-
-        Toast.makeText(getContext(),netVideoInfo.toString(),Toast.LENGTH_LONG).show();
-        Log.e("test",netVideoInfo.toString());
-        if (netVideoInfo.data != null) {
+        YouKuShowInfo youKuShowInfo=gson.fromJson(result,YouKuShowInfo.class);
+        Log.e(getClass().getSimpleName(), "parseData: "+youKuShowInfo.getShows().get(0).getId());
+        if (youKuShowInfo.getShows() != null) {
             mCurrentPage++;
             if (isInit) {
-                mData = netVideoInfo.data;
+                mData = youKuShowInfo.getShows();
                 onLoadingComplete(true);
             } else {
                 if (isRefresh) {
-                    mData = netVideoInfo.data;
+                    mData.clear();
+                    mData = youKuShowInfo.getShows();
                     mAdapter.notifyDataSetChanged();
                     mRecyclerView.refreshComplete();
                 } else {
-                    mData.addAll(netVideoInfo.data);
+                    mData.addAll(youKuShowInfo.getShows());
                     mAdapter.notifyDataSetChanged();
                     mRecyclerView.loadMoreComplete();
                 }
@@ -150,26 +148,32 @@ public class VideoListFragment extends BaseFragment {
         @Override
         public VideoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video_list, parent, false);
-            VideoViewHolder holder = new VideoViewHolder(view);
-            return holder;
+            return new VideoViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(final VideoViewHolder holder, final int position) {
+            final YouKuShowInfo.ShowsBean data = mData.get(position);
             final Bitmap[] pic = new Bitmap[1];
-
             ImageOptions.Builder builder = new ImageOptions.Builder();
             builder.setFailureDrawableId(R.drawable.nodata);
             ImageOptions imageOptions = builder.build();
-            x.image().bind(holder.videoIv, mData.get(position).vpic, imageOptions, new Callback.CommonCallback<Drawable>() {
+            x.image().bind(holder.videoIv, data.getBigthumbnail(), imageOptions, new Callback.CommonCallback<Drawable>() {
                 @Override
                 public void onSuccess(Drawable result) {
-                    int defaultColor = getResources().getColor(R.color.pinkPrimary);
                     BitmapDrawable drawable = (BitmapDrawable) result;
                     Bitmap bitmap = drawable.getBitmap();
-                    Palette palette = Palette.from(bitmap).generate();
-                    int dominantColor = palette.getDominantColor(defaultColor);
-                    holder.videoCardView.setCardBackgroundColor(palette.getDominantColor(dominantColor));
+                    ImageUtils.getDominantColor(bitmap, new ImageUtils.PaletteCallBack() {
+                        @Override
+                        public void onColorGenerated(int color, int textColor) {
+                            holder.videoCardView.setCardBackgroundColor(color);
+                            holder.videoScoreTv.setTextColor(textColor);
+                            holder.commentCountTv.setTextColor(textColor);
+                            holder.videoDateTV.setTextColor(textColor);
+                            holder.videoTitleTv.setTextColor(textColor);
+                            holder.viewCountTv.setTextColor(textColor);
+                        }
+                    });
                     pic[0] =bitmap;
                 }
 
@@ -188,34 +192,18 @@ public class VideoListFragment extends BaseFragment {
 
                 }
             });
-//            x.image().bind(holder.videoIv,mData.get(position).vpic);
-            holder.videoTitleTv.setText(mData.get(position).name);
-
-            StringBuilder directorBuilder = new StringBuilder();
-            directorBuilder.append("导演:");
-            for (String s : mData.get(position).director) {
-                directorBuilder.append(" " + s);
-            }
-            holder.videoDirectorTv.setText(directorBuilder);
-
-            StringBuilder actorBuilder = new StringBuilder();
-            actorBuilder.append("演员:");
-            for (String s : mData.get(position).performer) {
-                actorBuilder.append(" " + s);
-            }
-            holder.videoActorTv.setText(actorBuilder.toString());
-
-            holder.videoYearTv.setText("上映年代: " + mData.get(position).releaseYear);
-            holder.videoTimeTv.setText("上映日期: " + mData.get(position).releaseDate);
-//            holder.videoWatchCountTv.setText("浏览总量: "+mData.get(position).totalvv);
-
-//            holder.videoBriefTv.setText(mData.get(position).brief);
+            holder.videoTitleTv.setText(data.getName());
+            holder.videoScoreTv.setText("评分："+ VideoUtils.formatScore(data.getScore()));
+            holder.viewCountTv.setText("观看次数："+VideoUtils.formatNum(data.getView_count()));
+            holder.commentCountTv.setText("评论数: " + VideoUtils.formatNum(data.getComment_count()));
+            holder.videoDateTV.setText("上映日期: " + data.getPublished());
             holder.videoMoreBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getContext(), VideoDetailActivity.class);
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable(ConstantValues.VIDEO_INFO, mData.get(position));
+                    bundle.putString(ConstantValues.VIDEO_ID, data.getId());
+
                     bundle.putParcelable(ConstantValues.VIDEO_PIC, pic[0]);
                     intent.putExtras(bundle);
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -238,25 +226,21 @@ public class VideoListFragment extends BaseFragment {
 
         private ImageView videoIv;
         private TextView videoTitleTv;
-        private TextView videoBriefTv;
         private Button videoMoreBtn;
-        private TextView videoActorTv;
-        private TextView videoDirectorTv;
-        private TextView videoYearTv;
-        private TextView videoTimeTv;
-        private TextView videoWatchCountTv;
+        private TextView viewCountTv;
+        private TextView videoScoreTv;
+        private TextView commentCountTv;
+        private TextView videoDateTV;
         private CardView videoCardView;
 
         public VideoViewHolder(View itemView) {
             super(itemView);
             videoIv = (ImageView) itemView.findViewById(R.id.iv_video);
             videoTitleTv = (TextView) itemView.findViewById(R.id.tv_video_title);
-            videoDirectorTv = (TextView) itemView.findViewById(R.id.tv_video_director);
-            videoActorTv = (TextView) itemView.findViewById(R.id.tv_video_actor);
-//            videoBriefTv = (TextView) itemView.findViewById(R.id.tv_video_brief);
-            videoYearTv = (TextView) itemView.findViewById(R.id.tv_video_year);
-            videoTimeTv = (TextView) itemView.findViewById(R.id.tv_video_time);
-//            videoWatchCountTv = (TextView) itemView.findViewById(R.id.tv_video_watch_count);
+            videoScoreTv = (TextView) itemView.findViewById(R.id.tv_video_score);
+            viewCountTv = (TextView) itemView.findViewById(R.id.tv_video_view_count);
+            commentCountTv = (TextView) itemView.findViewById(R.id.tv_video_comment_count);
+            videoDateTV = (TextView) itemView.findViewById(R.id.tv_video_date);
             videoMoreBtn = (Button) itemView.findViewById(R.id.btn_video_more);
             videoCardView = (CardView) itemView.findViewById(R.id.card_video);
         }

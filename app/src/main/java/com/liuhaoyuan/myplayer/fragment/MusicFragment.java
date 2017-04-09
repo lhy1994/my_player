@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.liuhaoyuan.myplayer.R;
-import com.liuhaoyuan.myplayer.pager.MusicPager;
 
 import java.util.ArrayList;
 

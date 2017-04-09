@@ -3,39 +3,51 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <android.support.v7.widget.CardView
         android:id="@+id/card_singer"
+        style="@style/CardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="2dp"
         android:layout_margin="4dp"
-        style="@style/CardView"
-        app:cardMaxElevation="8dp"
-        app:cardElevation="5dp">
+        app:cardCornerRadius="2dp"
+        app:cardElevation="5dp"
+        app:cardMaxElevation="8dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/iv_singer"
-                android:scaleType="centerCrop"
+            <FrameLayout
+                android:id="@+id/fl_container"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:src="@color/grey" />
+                android:layout_height="150dp">
+
+                <ImageView
+                    android:id="@+id/iv_singer"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:scaleType="centerCrop"
+                    android:src="@color/grey" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="?android:attr/selectableItemBackground" />
+            </FrameLayout>
+
 
             <TextView
                 android:id="@+id/tv_singer_name"
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/iv_singer"
+                android:layout_below="@id/fl_container"
+                android:layout_marginBottom="10dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 android:ellipsize="end"
-                android:lines="2"
+                android:maxLines="2"
                 android:text="name"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="14sp" />
@@ -45,7 +57,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_alignParentRight="true"
-                android:layout_below="@id/iv_singer"
+                android:layout_below="@id/fl_container"
                 android:layout_marginTop="5dp"
                 android:background="@drawable/ic_action_more" />
         </RelativeLayout>

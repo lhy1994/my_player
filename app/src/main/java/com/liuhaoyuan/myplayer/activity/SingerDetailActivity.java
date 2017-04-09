@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.transition.AutoTransition;
+import android.transition.Fade;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -25,7 +26,7 @@ import com.liuhaoyuan.myplayer.APP;
 import com.liuhaoyuan.myplayer.R;
 import com.liuhaoyuan.myplayer.api.DataObserver;
 import com.liuhaoyuan.myplayer.api.MusicApi;
-import com.liuhaoyuan.myplayer.db.FavoriteDbUtils;
+import com.liuhaoyuan.myplayer.db.FavoriteDbManager;
 import com.liuhaoyuan.myplayer.domain.music.XiaMiArtistInfo;
 import com.liuhaoyuan.myplayer.fragment.BaseFragment;
 import com.liuhaoyuan.myplayer.fragment.SingerAlbumFragment;
@@ -45,17 +46,24 @@ public class SingerDetailActivity extends AppCompatActivity {
         APP application = (APP) getApplication();
         int currentTheme = application.getCurrentTheme();
         setTheme(currentTheme);
+
         // 设置一个exit transition
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setAllowEnterTransitionOverlap(true);
             getWindow().setExitTransition(new AutoTransition());//new Slide()  new Fade()
-            getWindow().setEnterTransition(new AutoTransition());
+            getWindow().setEnterTransition(new Fade());
             getWindow().setSharedElementEnterTransition(new AutoTransition());
             getWindow().setSharedElementExitTransition(new AutoTransition());
         }
         setContentView(R.layout.activity_singer_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         initView();
     }
 
@@ -69,7 +77,7 @@ public class SingerDetailActivity extends AppCompatActivity {
         setTitle("");
         final ImageView imageView = (ImageView) findViewById(R.id.iv_singer_detail);
         TextView nameTv = (TextView) findViewById(R.id.tv_singer_name);
-        final TextView desTv = (TextView) findViewById(R.id.tv_des);
+//        final TextView desTv = (TextView) findViewById(R.id.tv_des);
         final Button moreBtn = (Button) findViewById(R.id.btn_more);
 //        if (singerPic!=null){
 //            imageView.setImageBitmap(singerPic);
@@ -85,11 +93,11 @@ public class SingerDetailActivity extends AppCompatActivity {
             public void onComplete(final XiaMiArtistInfo.Artist data) {
                 if (data != null) {
                     if (TextUtils.isEmpty(data.profile)) {
-                        desTv.setVisibility(View.GONE);
+//                        desTv.setVisibility(View.GONE);
                         moreBtn.setVisibility(View.GONE);
                     } else {
                         final String s = data.profile.replaceAll("&nbsp;", "");
-                        desTv.setText(s);
+//                        desTv.setText(s);
                         moreBtn.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -110,7 +118,7 @@ public class SingerDetailActivity extends AppCompatActivity {
                         x.image().bind(imageView, data.logo);
                     }
                 } else {
-                    desTv.setVisibility(View.GONE);
+//                    desTv.setVisibility(View.GONE);
                     moreBtn.setVisibility(View.GONE);
                 }
                 qqMusicApi.unregisterObserver(this);
@@ -122,7 +130,7 @@ public class SingerDetailActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FavoriteDbUtils dbUtils = FavoriteDbUtils.getInstance(SingerDetailActivity.this);
+                FavoriteDbManager dbUtils = FavoriteDbManager.getInstance(SingerDetailActivity.this);
                 dbUtils.insertSinger(artistID, artistName, artistLogo);
                 final Snackbar snackbar = Snackbar.make(view, "收藏成功", Snackbar.LENGTH_LONG);
                 snackbar.setAction("知道了", new View.OnClickListener() {

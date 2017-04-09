@@ -7,14 +7,22 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.gson.Gson;
 import com.liuhaoyuan.myplayer.R;
+import com.liuhaoyuan.myplayer.domain.video.YouKuShowCategoryInfo;
 import com.liuhaoyuan.myplayer.utils.ConstantValues;
 
+import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
+
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by hyliu on 2017/1/13.
@@ -24,8 +32,8 @@ public class VideoFragment extends Fragment {
 
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
-    private String[] videoTypes=new String[]{"电影","电视剧","综艺","动漫"};
     private ArrayList<VideoListFragment> mFragments;
+    private List<YouKuShowCategoryInfo.CategoriesBean> mData;
 
     @Nullable
     @Override
@@ -39,38 +47,80 @@ public class VideoFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mFragments = new ArrayList<>();
-        for (int i=0;i<videoTypes.length;i++){
-            VideoListFragment videoListFragment=new VideoListFragment();
-            Bundle bundle=new Bundle();
-            bundle.putString(ConstantValues.VIDEO_TYPE,videoTypes[i]);
-            videoListFragment.setArguments(bundle);
-            mFragments.add(videoListFragment);
-        }
-        VideoFramentAdapter adapter=new VideoFramentAdapter(getChildFragmentManager());
-        mViewPager.setAdapter(adapter);
-        mTabLayout.setupWithViewPager(mViewPager);
+        getShowCategory();
     }
 
-    private class VideoFramentAdapter extends FragmentPagerAdapter{
+    private void getShowCategory(){
+        RequestParams params=new RequestParams("https://openapi.youku.com/v2/schemas/show/category.json");
+        x.http().get(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                parseData(result);
+            }
 
-        public VideoFramentAdapter(FragmentManager fm) {
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Log.e(getClass().getSimpleName(), "onError: "+"no category info!");
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
+    }
+
+    private void parseData(String result) {
+        Gson gson=new Gson();
+        YouKuShowCategoryInfo categoryInfo = gson.fromJson(result, YouKuShowCategoryInfo.class);
+        mData= categoryInfo.getCategories();
+        initAdapter();
+    }
+
+    private void initAdapter() {
+        if (mData!=null){
+            mFragments = new ArrayList<>();
+            int length=mData.size();
+            for (int i=0;i<length;i++){
+                VideoListFragment videoListFragment=new VideoListFragment();
+                Bundle bundle=new Bundle();
+                bundle.putString(ConstantValues.VIDEO_TYPE,mData.get(i).getLabel());
+                videoListFragment.setArguments(bundle);
+                mFragments.add(videoListFragment);
+            }
+            VideoFragmentAdapter adapter=new VideoFragmentAdapter(getChildFragmentManager());
+            mViewPager.setAdapter(adapter);
+            mTabLayout.setupWithViewPager(mViewPager);
+        }
+    }
+
+    private class VideoFragmentAdapter extends FragmentPagerAdapter{
+
+        public VideoFragmentAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
         public Fragment getItem(int position) {
-            return mFragments.get(position);
+            if (mFragments!=null){
+                return mFragments.get(position);
+            }
+            return null;
         }
 
         @Override
         public int getCount() {
-            return videoTypes.length;
+            return mData.size();
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return videoTypes[position];
+            return mData.get(position).getLabel();
         }
     }
 

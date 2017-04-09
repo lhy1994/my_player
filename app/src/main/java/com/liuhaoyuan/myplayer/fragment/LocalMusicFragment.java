@@ -1,6 +1,5 @@
 package com.liuhaoyuan.myplayer.fragment;
 
-import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -9,18 +8,21 @@ import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.liuhaoyuan.myplayer.R;
 import com.liuhaoyuan.myplayer.aidl.Song;
 import com.liuhaoyuan.myplayer.utils.MusicUtils;
+
+import org.xutils.image.ImageOptions;
+import org.xutils.x;
 
 import java.util.ArrayList;
 
@@ -33,7 +35,7 @@ public class LocalMusicFragment extends BaseFragment {
 
     @Override
     public void loadData() {
-        SimpleTask simpleTask=new SimpleTask();
+        SimpleTask simpleTask = new SimpleTask();
         simpleTask.execute(getContext());
     }
 
@@ -48,6 +50,23 @@ public class LocalMusicFragment extends BaseFragment {
         return view;
     }
 
+    private String getAlbumArt(String album_id) {
+        String mUriAlbums = "content://media/external/audio/albums";
+        String[] projection = new String[]{"album_art"};
+        Cursor cur = getContext().getContentResolver().query(
+                Uri.parse(mUriAlbums + "/" + album_id),
+                projection, null, null, null);
+        String album_art = null;
+        if (cur != null) {
+            if (cur.getCount() > 0 && cur.getColumnCount() > 0) {
+                cur.moveToNext();
+                album_art = cur.getString(0);
+            }
+            cur.close();
+        }
+        return album_art;
+    }
+
     private class SimpleTask extends AsyncTask<Context, Integer, ArrayList<Song>> {
 
         @Override
@@ -58,7 +77,9 @@ public class LocalMusicFragment extends BaseFragment {
             String[] projecttion = new String[]{
                     MediaStore.Audio.Media.TITLE,
                     MediaStore.Audio.Media.DATA,
-                    MediaStore.Audio.Media.ARTIST
+                    MediaStore.Audio.Media.ARTIST,
+                    MediaStore.Audio.Media.ALBUM_ID,
+                    MediaStore.Audio.Media.ALBUM
             };
             Cursor cursor = resolver.query(uri, projecttion, null, null, null);
             while (cursor.moveToNext()) {
@@ -66,6 +87,9 @@ public class LocalMusicFragment extends BaseFragment {
                 info.songname = cursor.getString(0);
                 info.url = cursor.getString(1);
                 info.singername = cursor.getString(2);
+                info.albumid = cursor.getString(3);
+                info.albumname = cursor.getString(4);
+                info.albumpic_big = getAlbumArt(info.albumid);
                 songList.add(info);
             }
             return songList;
@@ -74,10 +98,10 @@ public class LocalMusicFragment extends BaseFragment {
         @Override
         protected void onPostExecute(ArrayList<Song> songs) {
             super.onPostExecute(songs);
-            if (songs.size()>0){
-                mData=songs;
+            if (songs.size() > 0) {
+                mData = songs;
                 onLoadingComplete(true);
-            }else onLoadingComplete(false);
+            } else onLoadingComplete(false);
         }
     }
 
@@ -85,16 +109,19 @@ public class LocalMusicFragment extends BaseFragment {
 
         @Override
         public MusicViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_local_music, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_local_songs, parent, false);
             MusicViewHolder musicViewHolder = new MusicViewHolder(view);
             return musicViewHolder;
         }
 
         @Override
         public void onBindViewHolder(MusicViewHolder holder, final int position) {
-            holder.songNameTV.setText(mData.get(position).songname);
-            holder.singerNameTv.setText(mData.get(position).singername);
-            holder.moreBtn.setOnClickListener(new View.OnClickListener() {
+            ImageOptions.Builder builder=new ImageOptions.Builder();
+            ImageOptions imageOptions = builder.setFailureDrawableId(R.drawable.music_fail).build();
+            x.image().bind(holder.mAlbumArtIv,mData.get(position).albumpic_big,imageOptions);
+            holder.mSongNameTV.setText(mData.get(position).songname);
+            holder.mSingerNameTv.setText(mData.get(position).singername);
+            holder.mMoreBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     PopupMenu popupMenu = new PopupMenu(getContext(), v);
@@ -133,15 +160,17 @@ public class LocalMusicFragment extends BaseFragment {
 
     private class MusicViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView songNameTV;
-        private TextView singerNameTv;
-        private Button moreBtn;
+        private TextView mSongNameTV;
+        private TextView mSingerNameTv;
+        private Button mMoreBtn;
+        private ImageView mAlbumArtIv;
 
         public MusicViewHolder(View itemView) {
             super(itemView);
-            songNameTV = (TextView) itemView.findViewById(R.id.tv_song_name);
-            singerNameTv = (TextView) itemView.findViewById(R.id.tv_singer_name);
-            moreBtn = (Button) itemView.findViewById(R.id.btn_song_more);
+            mAlbumArtIv = (ImageView) itemView.findViewById(R.id.iv_rank_song);
+            mSongNameTV = (TextView) itemView.findViewById(R.id.tv_song_name);
+            mSingerNameTv = (TextView) itemView.findViewById(R.id.tv_singer);
+            mMoreBtn = (Button) itemView.findViewById(R.id.btn_song_more);
         }
     }
 }

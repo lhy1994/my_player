@@ -13,7 +13,7 @@
         <item name="android:windowContentTransitions">true</item>
         <item name="colorPrimary">@color/purplePrimary</item>
         <item name="colorPrimaryDark">@color/purplePrimaryDark</item>
-        <item name="colorAccent">@color/limeAccent</item>
+        <item name="colorAccent">@color/amberAccent</item>
         <item name="android:textColorPrimary">@color/primaryTextColor</item>
         <item name="android:textColorSecondary">@color/secondaryTextColor</item>
         <item name="android:progressBarStyle">@style/Widget.AppCompat.ProgressBar</item>

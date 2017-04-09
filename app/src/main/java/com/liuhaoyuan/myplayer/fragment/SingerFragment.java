@@ -1,9 +1,14 @@
 package com.liuhaoyuan.myplayer.fragment;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.support.annotation.ColorInt;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -23,6 +28,7 @@ import com.liuhaoyuan.myplayer.api.DataObserver;
 import com.liuhaoyuan.myplayer.api.MusicApi;
 import com.liuhaoyuan.myplayer.domain.music.XiaMiSongInfo;
 import com.liuhaoyuan.myplayer.utils.ConstantValues;
+import com.liuhaoyuan.myplayer.utils.ImageUtils;
 
 import org.xutils.common.Callback;
 import org.xutils.image.ImageOptions;
@@ -161,19 +167,22 @@ public class SingerFragment extends BaseFragment {
 
         @Override
         public void onBindViewHolder(final SingerViewHolder holder, final int position) {
-            final Bitmap[] bitmap = new Bitmap[1];
+//            final Bitmap[] bitmap = new Bitmap[1];
             ImageOptions.Builder builder = new ImageOptions.Builder();
-            ScaleAnimation scaleAnimation = new ScaleAnimation(0.3f, 1, 0.3f, 1, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-            scaleAnimation.setDuration(500);
-            scaleAnimation.setFillAfter(true);
-            builder.setAnimation(scaleAnimation);
-            builder.setFailureDrawableId(R.drawable.nodata);
+            builder.setFailureDrawableId(R.drawable.music_fail);
             ImageOptions options = builder.build();
             x.image().bind(holder.imageView, data.get(position).artistLogo, options, new Callback.CommonCallback<Drawable>() {
                 @Override
                 public void onSuccess(Drawable result) {
                     BitmapDrawable drawable = (BitmapDrawable) result;
-                    bitmap[0] = drawable.getBitmap();
+                    Bitmap bitmap = drawable.getBitmap();
+                    ImageUtils.getDominantColor(bitmap, new ImageUtils.PaletteCallBack() {
+                        @Override
+                        public void onColorGenerated(int color, int textColor) {
+                            holder.textView.setBackgroundColor(color);
+                            holder.textView.setTextColor(textColor);
+                        }
+                    });
                 }
 
                 @Override
@@ -191,26 +200,27 @@ public class SingerFragment extends BaseFragment {
 
                 }
             });
-            holder.textView.setText(data.get(position).artistName);
+            String artistName = data.get(position).artistName;
+            int index = artistName.indexOf("-");
+            if (index != -1) {
+                artistName = artistName.substring(0, index);
+            }
+            holder.textView.setText(artistName);
+            final String finalArtistName = artistName;
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getContext(), SingerDetailActivity.class);
-                    String artistName = data.get(position).artistName;
-                    int index = artistName.indexOf("-");
-                    if (index != -1) {
-                        artistName = artistName.substring(0, index);
-                    }
-                    intent.putExtra(ConstantValues.ARTIST_NAME, artistName);
+                    intent.putExtra(ConstantValues.ARTIST_NAME, finalArtistName);
                     intent.putExtra(ConstantValues.ARTIST_ID, data.get(position).artistId);
                     intent.putExtra(ConstantValues.ARTIST_LOGO, data.get(position).artistLogo);
-//                    Bundle bundle=new Bundle();
+//                    Bundle bundle = new Bundle();
 //                    bundle.putParcelable(ConstantValues.SINGER_PIC,bitmap[0]);
 //                    intent.putExtras(bundle);
 //                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 //                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(getActivity(), holder.imageView, getString(R.string.transition_singer_pic));
-//                        startActivity(intent,options.toBundle());
-//                    }else {
+//                        startActivity(intent, options.toBundle());
+//                    } else {
 //                        startActivity(intent);
 //                    }
                     startActivity(intent);

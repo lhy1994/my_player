@@ -18,6 +18,8 @@ import com.liuhaoyuan.myplayer.activity.MusicPlayActivity;
 import com.liuhaoyuan.myplayer.R;
 import com.liuhaoyuan.myplayer.aidl.IMusicPlayService;
 import com.liuhaoyuan.myplayer.aidl.Song;
+import com.liuhaoyuan.myplayer.db.HistoryDbManager;
+import com.liuhaoyuan.myplayer.manager.ThreadPoolManger;
 import com.liuhaoyuan.myplayer.utils.ConstantValues;
 import com.liuhaoyuan.myplayer.utils.MusicUtils;
 
@@ -54,6 +56,12 @@ public class MusicPlayService extends Service {
             Intent intent = new Intent();
             intent.setAction("prepared");
             sendBroadcast(intent);
+            ThreadPoolManger.getInstance().execute(new Runnable() {
+                @Override
+                public void run() {
+                    HistoryDbManager.getInstance(getApplicationContext()).addMusicHistory(songList.get(currentPosition));
+                }
+            });
         }
     };
     private MediaPlayer.OnCompletionListener mOnCompletionListener = new MediaPlayer.OnCompletionListener() {

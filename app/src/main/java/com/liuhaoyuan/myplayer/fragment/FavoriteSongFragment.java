@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.liuhaoyuan.myplayer.R;
 import com.liuhaoyuan.myplayer.aidl.Song;
-import com.liuhaoyuan.myplayer.db.FavoriteDbUtils;
+import com.liuhaoyuan.myplayer.db.FavoriteDbManager;
 import com.liuhaoyuan.myplayer.utils.MusicUtils;
 
 import org.xutils.x;
@@ -59,7 +59,7 @@ public class FavoriteSongFragment extends BaseFragment {
 
         @Override
         public FavoriteSongViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_rank_songs, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_local_songs, parent, false);
             FavoriteSongViewHolder viewHolder=new FavoriteSongViewHolder(view);
             return viewHolder;
         }
@@ -81,7 +81,7 @@ public class FavoriteSongFragment extends BaseFragment {
                             if (itemId==R.id.menu_play){
                                 MusicUtils.playMusic(getContext(),position,true,mData);
                             }else if (itemId==R.id.menu_delete){
-                                FavoriteDbUtils dbUtils = FavoriteDbUtils.getInstance(getContext());
+                                FavoriteDbManager dbUtils = FavoriteDbManager.getInstance(getContext());
                                 dbUtils.deleteSong(mData.get(position).songid);
                                 mData.remove(position);
                                 notifyDataSetChanged();
@@ -126,7 +126,7 @@ public class FavoriteSongFragment extends BaseFragment {
 
         @Override
         protected ArrayList<Song> doInBackground(Context... params) {
-            FavoriteDbUtils dbUtils = FavoriteDbUtils.getInstance(getContext());
+            FavoriteDbManager dbUtils = FavoriteDbManager.getInstance(getContext());
             ArrayList<Song> songList = dbUtils.queryAllSong();
             return songList;
         }

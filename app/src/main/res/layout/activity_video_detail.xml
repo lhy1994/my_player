@@ -46,8 +46,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        >
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -61,24 +60,13 @@
                     android:id="@+id/tv_net_video_detail_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/text_margin"
+                    android:layout_marginBottom="10dp"
                     android:layout_marginLeft="@dimen/text_margin"
                     android:layout_marginRight="@dimen/text_margin"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="@dimen/text_margin"
                     android:text="视频名"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     android:textSize="22sp" />
-
-                <TextView
-                    android:id="@+id/tv_net_video_detail_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@id/tv_net_video_detail_name"
-                    android:layout_marginLeft="10dp"
-                    android:layout_toRightOf="@id/tv_net_video_detail_name"
-                    android:text="更新至第4集"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/tv_net_video_detail_score"
@@ -92,91 +80,110 @@
                     android:textSize="20sp" />
 
                 <TextView
-                    android:id="@+id/tv_net_video_detail_director"
+                    android:id="@+id/tv_net_video_detail_area"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/tv_net_video_detail_score"
+                    android:layout_alignLeft="@id/tv_net_video_detail_name"
                     android:layout_below="@id/tv_net_video_detail_score"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="16dp"
                     android:layout_marginTop="10dp"
+                    android:text="地区"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tv_net_video_detail_director"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@id/tv_net_video_detail_name"
+                    android:layout_below="@id/tv_net_video_detail_area"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="5dp"
                     android:text="导演"
-                    android:textSize="14sp" />
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/tv_net_video_detail_actor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/tv_net_video_detail_director"
+                    android:layout_alignLeft="@id/tv_net_video_detail_name"
                     android:layout_below="@id/tv_net_video_detail_director"
+                    android:layout_marginLeft="10dp"
                     android:layout_marginRight="16dp"
                     android:layout_marginTop="5dp"
                     android:text="演员"
-                    android:textSize="14sp" />
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/tv_net_video_detail_tag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/tv_net_video_detail_director"
+                    android:layout_alignLeft="@id/tv_net_video_detail_name"
                     android:layout_below="@id/tv_net_video_detail_actor"
+                    android:layout_marginLeft="10dp"
                     android:layout_marginRight="16dp"
                     android:layout_marginTop="5dp"
                     android:text="标签"
-                    android:textSize="14sp" />
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/tv_net_video_detail_total"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/tv_net_video_detail_director"
+                    android:layout_alignLeft="@id/tv_net_video_detail_name"
                     android:layout_below="@id/tv_net_video_detail_tag"
+                    android:layout_marginLeft="10dp"
                     android:layout_marginRight="16dp"
                     android:layout_marginTop="5dp"
                     android:text="浏览总量"
-                    android:textSize="14sp" />
+                    android:textSize="16sp" />
 
                 <TextView
-                    android:id="@+id/tv_net_video_detail_year"
+                    android:id="@+id/tv_net_video_detail_comment"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/tv_net_video_detail_director"
+                    android:layout_alignLeft="@id/tv_net_video_detail_name"
                     android:layout_below="@id/tv_net_video_detail_total"
+                    android:layout_marginLeft="10dp"
                     android:layout_marginRight="16dp"
                     android:layout_marginTop="5dp"
-                    android:text="上映年代"
-                    android:textSize="14sp" />
+                    android:text="评论数"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/tv_net_video_detail_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/tv_net_video_detail_director"
-                    android:layout_below="@id/tv_net_video_detail_year"
+                    android:layout_alignLeft="@id/tv_net_video_detail_name"
+                    android:layout_below="@id/tv_net_video_detail_comment"
+                    android:layout_marginLeft="10dp"
                     android:layout_marginRight="16dp"
                     android:layout_marginTop="5dp"
                     android:text="上映时间"
-                    android:textSize="14sp" />
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/tv_net_video_detail_brief"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/tv_net_video_detail_director"
+                    android:layout_alignLeft="@id/tv_net_video_detail_name"
                     android:layout_below="@id/tv_net_video_detail_time"
+                    android:layout_marginLeft="10dp"
                     android:layout_marginTop="5dp"
                     android:text="剧情概要："
-                    android:textSize="14sp" />
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/tv_net_video_detail_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/tv_net_video_detail_director"
+                    android:layout_alignLeft="@id/tv_net_video_detail_name"
                     android:layout_below="@id/tv_net_video_detail_brief"
+                    android:layout_marginLeft="10dp"
                     android:layout_marginRight="16dp"
                     android:layout_marginTop="5dp"
-                    android:textSize="14sp" />
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/tv_net_video_detail_more"
@@ -199,7 +206,7 @@
                     android:layout_below="@id/tv_net_video_detail_more"
                     android:layout_marginLeft="16dp"
                     android:orientation="vertical"
-                    android:padding="10dp"></LinearLayout>
+                    android:padding="10dp" />
                 <!--<android.support.v7.widget.RecyclerView-->
                 <!--android:id="@+id/lv_sites"-->
                 <!--android:layout_width="match_parent"-->

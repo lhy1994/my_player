@@ -17,7 +17,7 @@ import com.liuhaoyuan.myplayer.R;
 import com.liuhaoyuan.myplayer.api.DataObserver;
 import com.liuhaoyuan.myplayer.api.MusicApi;
 import com.liuhaoyuan.myplayer.aidl.Song;
-import com.liuhaoyuan.myplayer.db.FavoriteDbUtils;
+import com.liuhaoyuan.myplayer.db.FavoriteDbManager;
 import com.liuhaoyuan.myplayer.utils.ConstantValues;
 import com.liuhaoyuan.myplayer.utils.MusicUtils;
 
@@ -156,7 +156,7 @@ public class SingerSongsFragment extends BaseFragment {
                                     MusicUtils.playMusic(getContext(),position,true,data);
                                     break;
                                 case R.id.menu_favorite:
-                                    FavoriteDbUtils dbUtils = FavoriteDbUtils.getInstance(getContext());
+                                    FavoriteDbManager dbUtils = FavoriteDbManager.getInstance(getContext());
                                     Song song = mData.get(position);
                                     dbUtils.insertSong(song.songid,song.songname,song.singername,song.url,song.albumpic_big);
                                     final Snackbar snackbar=Snackbar.make(v,"收藏成功",Snackbar.LENGTH_LONG);
