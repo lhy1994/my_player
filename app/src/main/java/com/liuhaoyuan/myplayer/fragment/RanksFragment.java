@@ -68,7 +68,7 @@ public class RanksFragment extends BaseFragment {
                         startActivity(intent);
                     }
 //                    startActivity(intent);
-                    
+
                 }
             });
         }
