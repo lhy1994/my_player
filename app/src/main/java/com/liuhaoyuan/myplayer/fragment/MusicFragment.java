@@ -28,9 +28,7 @@ public class MusicFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = View.inflate(getContext(), R.layout.fragment_music,null);
-
-
+        view = View.inflate(getContext(), R.layout.fragment_music, null);
         return view;
     }
 
@@ -41,15 +39,17 @@ public class MusicFragment extends Fragment {
     }
 
     private void initData() {
-        titles = new String[]{"最热","歌手","排行榜"};
-        int [] icons=new int[]{R.drawable.ic_action_fire,R.drawable.ic_action_people,R.drawable.ic_action_ranks};
+        titles = new String[]{"热门", "歌手", "排行榜"};
+        int[] icons = new int[]{R.drawable.ic_whatshot_white_24dp,
+                R.drawable.ic_face_white_24dp,
+                R.drawable.ic_trending_up_white_24dp};
         fragments = new ArrayList<>();
         fragments.add(new HotMusicFragment());
         fragments.add(new SingerFragment());
         fragments.add(new RanksFragment());
 
-        TabLayout tabLayout= (TabLayout) view.findViewById(R.id.tab_music);
-        ViewPager viewPager= (ViewPager) view.findViewById(R.id.vp_music);
+        TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tab_music);
+        ViewPager viewPager = (ViewPager) view.findViewById(R.id.vp_music);
         viewPager.setAdapter(new MusicAdapter(getChildFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
 
@@ -60,7 +60,7 @@ public class MusicFragment extends Fragment {
         }
     }
 
-    class MusicAdapter extends FragmentPagerAdapter{
+    class MusicAdapter extends FragmentPagerAdapter {
 
         public MusicAdapter(FragmentManager fm) {
             super(fm);

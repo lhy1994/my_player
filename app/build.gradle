@@ -11,6 +11,9 @@ android {
         versionCode 1
         versionName "1.0"
         vectorDrawables.useSupportLibrary = true
+        //renderscript support mode is not supported for 21+ with gradle version 2.0
+        renderscriptTargetApi 20
+        renderscriptSupportModeEnabled true
     }
     sourceSets {
         main {
@@ -34,6 +37,7 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':vitamio2')
+
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:design:24.2.1'
     compile 'org.xutils:xutils:3.3.4'
@@ -43,5 +47,7 @@ dependencies {
     compile 'com.android.support:palette-v7:25.1.0'
     compile 'com.android.support:support-v4:24.2.1'
     compile 'com.android.support:support-vector-drawable:24.2.1'
+    compile 'com.android.support:percent:24.2.1'
+    compile 'com.android.support.constraint:constraint-layout:+'
     testCompile 'junit:junit:4.12'
 }

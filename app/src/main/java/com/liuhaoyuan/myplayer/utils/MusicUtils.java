@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.liuhaoyuan.myplayer.activity.MusicPlayActivity;
+import com.liuhaoyuan.myplayer.activity.MusicPlayActivity2;
 import com.liuhaoyuan.myplayer.aidl.Song;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 public class MusicUtils {
     public static boolean HAS_PLAYLIST=false;
     public static void playMusic(Context context,int position, boolean playlistChanged, ArrayList<Song> songList){
-        Intent intent = new Intent(context, MusicPlayActivity.class);
+        Intent intent = new Intent(context, MusicPlayActivity2.class);
         intent.putExtra(ConstantValues.PLAYLIST_CHANGED, playlistChanged);
 
         if (playlistChanged){

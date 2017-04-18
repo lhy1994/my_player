@@ -139,7 +139,7 @@ public class FavoriteVideoFragment extends BaseFragment {
                     popupMenu.show();
                 }
             });
-            holder.frameLayout.setOnClickListener(new View.OnClickListener() {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getContext(), VideoDetailActivity.class);

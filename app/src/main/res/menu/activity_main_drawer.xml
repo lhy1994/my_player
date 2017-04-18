@@ -5,36 +5,26 @@
         <item
             android:id="@+id/nav_music"
             android:icon="@drawable/ic_nav_music"
-            android:title="music" />
+            android:title="@string/navigation_menu_music" />
         <item
             android:id="@+id/nav_video"
             android:icon="@drawable/ic_nav_video"
-            android:title="video" />
+            android:title="@string/navigation_menu_video" />
         <item
             android:id="@+id/nav_local"
             android:icon="@drawable/ic_menu_local"
-            android:title="local" />
+            android:title="@string/navigation_menu_local" />
         <item
             android:id="@+id/nav_favorite"
             android:icon="@drawable/ic_action_favorite"
-            android:title="favorite" />
+            android:title="@string/navigation_menu_favorite" />
         <item
             android:id="@+id/nav_history"
             android:icon="@drawable/ic_action_history"
-            android:title="history" />
+            android:title="@string/navigation_menu_history" />
         <item
             android:id="@+id/nav_theme"
             android:icon="@drawable/ic_action_theme"
-            android:title="theme" />
-        <item
-            android:id="@+id/nav_tv"
-            android:icon="@drawable/ic_action_tv"
-            android:title="subscribe" />
-
-        <item
-            android:id="@+id/nav_download"
-            android:icon="@drawable/ic_action_download"
-            android:title="download" />
-
+            android:title="@string/navigation_menu_theme" />
     </group>
 </menu>

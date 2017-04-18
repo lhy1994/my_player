@@ -10,7 +10,7 @@
         app:showAsAction="always|collapseActionView" />
     <item
         android:id="@+id/action_play"
-        android:icon="@drawable/ic_queue_music_white_24dp"
+        android:icon="@drawable/ic_music_note_white_24dp"
         android:title="Music"
         app:showAsAction="always" />
     <item

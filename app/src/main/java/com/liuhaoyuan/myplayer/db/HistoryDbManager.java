@@ -45,7 +45,7 @@ public class HistoryDbManager {
             list=new ArrayList<>();
             while (cursor.moveToNext()){
                 byte[] bytes = cursor.getBlob(cursor.getColumnIndex(MUSIC_HISTORY_SONG_INFO));
-                Song song=bytesToSong(bytes);
+                Song song=Converter.bytesToSong(bytes);
                 if (song!=null){
                     list.add(song);
                 }
@@ -63,7 +63,7 @@ public class HistoryDbManager {
             list=new ArrayList<>();
             while (cursor.moveToNext()){
                 byte[] bytes = cursor.getBlob(cursor.getColumnIndex(MUSIC_HISTORY_SONG_INFO));
-                Song song=bytesToSong(bytes);
+                Song song=Converter.bytesToSong(bytes);
                 if (song!=null){
                     list.add(song);
                 }
@@ -76,7 +76,7 @@ public class HistoryDbManager {
 
     public void addMusicHistory(Song song){
         SQLiteDatabase db = mHelper.getWritableDatabase();
-        byte[] bytes = songToBytes(song);
+        byte[] bytes = Converter.songToBytes(song);
         if (bytes==null){
             return;
         }
@@ -103,54 +103,5 @@ public class HistoryDbManager {
         SQLiteDatabase db = mHelper.getWritableDatabase();
         db.delete(MUSIC_HISTORY_TABLE_NAME,MUSIC_HISTORY_SONG_URL+"=?",new String[]{url} );
         db.close();
-    }
-
-    private Song bytesToSong(byte[] bytes){
-        ByteArrayInputStream byteArrayInputStream=new ByteArrayInputStream(bytes);
-        ObjectInputStream objectInputStream=null;
-        Song song=null;
-        try {
-            objectInputStream=new ObjectInputStream(byteArrayInputStream);
-            song= (Song) objectInputStream.readObject();
-            return song;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }finally {
-            if (objectInputStream!=null){
-                try {
-                    objectInputStream.close();
-                    byteArrayInputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return song;
-    }
-
-    private byte[] songToBytes(Song song){
-        ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
-        ObjectOutputStream objectOutputStream = null;
-        try {
-            objectOutputStream = new ObjectOutputStream(arrayOutputStream);
-            objectOutputStream.writeObject(song);
-            objectOutputStream.flush();
-            byte[] bytes = arrayOutputStream.toByteArray();
-            return bytes;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (objectOutputStream != null) {
-                try {
-                    objectOutputStream.close();
-                    arrayOutputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return null;
     }
 }

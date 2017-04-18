@@ -27,11 +27,10 @@ public class FavoriteDbManager {
     private final String SINGER_TABLE_NAME = "favorite_singer";
     private final String VIDEO_TABLE_NAME = "favorite_video";
     private final String SONG_ID = "song_id";
-    private final String SONG_NAME = "song_name";
-    private final String SINGER_NAME = "singer_name";
-    private final String URL = "url";
-    private final String PIC_URL = "pic_url";
+    private final String SONG_URL = "song_url";
+    private final String SONG_INFO = "song_info";
     private final String SINGER_ID = "singer_id";
+    private final String SINGER_NAME = "singer_name";
     private final String SINGER_PIC = "singer_pic";
     private final String VIDEO_ID = "video_id";
     private final String VIDEO_INFO = "video_info";
@@ -47,27 +46,23 @@ public class FavoriteDbManager {
         return instance;
     }
 
-    public void insertSong(String songId, String songName, String singerName, String url, String picUrl) {
+    public void insertSong(Song song) {
         SQLiteDatabase database = mHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(SONG_ID, songId);
-        values.put(URL, url);
-        values.put(SONG_NAME, songName);
-        values.put(SINGER_NAME, singerName);
-        values.put(PIC_URL, picUrl);
-        Cursor cursor = database.query(SONG_TABLE_NAME, null, SONG_ID + "=?", new String[]{songId}, null, null, null);
-        if (cursor != null && cursor.getCount() > 0) {
-            database.update(SONG_TABLE_NAME, values, SONG_ID + "=?", new String[]{songId});
-            cursor.close();
-        } else {
-            database.insert(SONG_TABLE_NAME, null, values);
+        byte[] bytes = Converter.songToBytes(song);
+        if (bytes==null){
+            return;
         }
+        ContentValues values = new ContentValues();
+        values.put(SONG_URL,song.url);
+        values.put(SONG_ID,song.songid);
+        values.put(SONG_INFO,bytes);
+        database.replace(SONG_TABLE_NAME,null,values);
         database.close();
     }
 
-    public void deleteSong(String songId) {
+    public void deleteSong(String url) {
         SQLiteDatabase database = mHelper.getWritableDatabase();
-        database.delete(SONG_TABLE_NAME, SONG_ID + "=?", new String[]{songId});
+        database.delete(SONG_TABLE_NAME, SONG_URL + "=?", new String[]{url});
         database.close();
     }
 
@@ -77,18 +72,43 @@ public class FavoriteDbManager {
         ArrayList<Song> list = new ArrayList<>();
         if (cursor != null) {
             while (cursor.moveToNext()) {
-                Song song = new Song();
-                song.songid = cursor.getString(cursor.getColumnIndex(SONG_ID));
-                song.songname = cursor.getString(cursor.getColumnIndex(SONG_NAME));
-                song.singername = cursor.getString(cursor.getColumnIndex(SINGER_NAME));
-                song.url = cursor.getString(cursor.getColumnIndex(URL));
-                song.albumpic_big = cursor.getString(cursor.getColumnIndex(PIC_URL));
+                byte[] bytes = cursor.getBlob(cursor.getColumnIndex(SONG_INFO));
+                Song song = Converter.bytesToSong(bytes);
                 list.add(song);
             }
             cursor.close();
         }
         database.close();
         return list;
+    }
+
+    public Song querySongByUrl(String url){
+        SQLiteDatabase database = mHelper.getWritableDatabase();
+        Cursor cursor = database.query(SONG_TABLE_NAME, null, SONG_URL + "=?", new String[]{url}, null, null, null);
+        Song song=null;
+        if (cursor!=null){
+            if (cursor.getColumnCount()>0 && cursor.moveToFirst()){
+                byte[] bytes = cursor.getBlob(cursor.getColumnIndex(SONG_INFO));
+                song = Converter.bytesToSong(bytes);
+            }
+            cursor.close();
+        }
+        database.close();
+        return song;
+    }
+
+    public boolean songFavorited(String url){
+        SQLiteDatabase database = mHelper.getWritableDatabase();
+        Cursor cursor = database.query(SONG_TABLE_NAME, null, SONG_URL + "=?", new String[]{url}, null, null, null);
+        boolean favorited=false;
+        if (cursor!=null){
+            if (cursor.getCount()>0 ){
+                favorited=true;
+            }
+            cursor.close();
+        }
+        database.close();
+        return favorited;
     }
 
     public void insertSinger(String singerID, String singerName, String singerPic) {

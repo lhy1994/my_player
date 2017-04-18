@@ -138,7 +138,7 @@ public class HotMusicFragment extends BaseFragment {
             x.image().bind(holder.imageView, data.get(position).albumpic_big,imageOptions);
             holder.nameTv.setText(data.get(position).songname);
             holder.singerTv.setText(data.get(position).singername);
-            holder.frameLayout.setOnClickListener(new View.OnClickListener() {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                    MusicUtils.playMusic(getContext(),position,true,data);
@@ -157,9 +157,12 @@ public class HotMusicFragment extends BaseFragment {
                                     MusicUtils.playMusic(getContext(),position,true,data);
                                     break;
                                 case R.id.menu_favorite:
-                                    FavoriteDbManager dbUtils = FavoriteDbManager.getInstance(getContext());
-                                    Song song = mData.get(position);
-                                    dbUtils.insertSong(song.songid,song.songname,song.singername,song.url,song.albumpic_big);
+                                    ThreadPoolManger.getInstance().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            FavoriteDbManager.getInstance(getContext()).insertSong(data.get(position));
+                                        }
+                                    });
                                     final Snackbar snackbar=Snackbar.make(v,"收藏成功",Snackbar.LENGTH_LONG);
                                     snackbar.setAction("知道了", new View.OnClickListener() {
                                         @Override

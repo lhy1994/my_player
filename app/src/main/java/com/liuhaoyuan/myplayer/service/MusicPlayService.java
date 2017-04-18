@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.liuhaoyuan.myplayer.APP;
 import com.liuhaoyuan.myplayer.activity.MusicPlayActivity;
 import com.liuhaoyuan.myplayer.R;
+import com.liuhaoyuan.myplayer.activity.MusicPlayActivity2;
 import com.liuhaoyuan.myplayer.aidl.IMusicPlayService;
 import com.liuhaoyuan.myplayer.aidl.Song;
 import com.liuhaoyuan.myplayer.db.HistoryDbManager;
@@ -33,12 +34,11 @@ import java.util.Random;
  */
 public class MusicPlayService extends Service {
 
-    public static final int REPEAT_MODE_NORMAL = 1;
     public static final int REPEAT_MODE_SINGLE = 2;
     public static final int REPEAT_MODE_RANDOM = 3;
     public static final int REPEAT_MODE_ALL = 4;
 
-    private int mode = REPEAT_MODE_NORMAL;
+    private int mode = REPEAT_MODE_ALL;
     private boolean isCompletion = false;
 
     private boolean isRemotePlay;
@@ -54,7 +54,7 @@ public class MusicPlayService extends Service {
             isCompletion = false;
             play();
             Intent intent = new Intent();
-            intent.setAction("prepared");
+            intent.setAction(ConstantValues.MUSIC_PREPARED);
             sendBroadcast(intent);
             ThreadPoolManger.getInstance().execute(new Runnable() {
                 @Override
@@ -85,7 +85,7 @@ public class MusicPlayService extends Service {
     public void onCreate() {
         super.onCreate();
         preferences = getSharedPreferences(ConstantValues.MUSIC_CONFIG, MODE_PRIVATE);
-        mode = preferences.getInt(ConstantValues.MUSIC_MODE, REPEAT_MODE_NORMAL);
+        mode = preferences.getInt(ConstantValues.MUSIC_MODE, REPEAT_MODE_ALL);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class MusicPlayService extends Service {
 //        isRemotePlay = intent.getBooleanExtra("is_remote_play", false);
 
         mPlaylistChanged = intent.getBooleanExtra(ConstantValues.PLAYLIST_CHANGED, true);
-        if (mPlaylistChanged){
+        if (mPlaylistChanged) {
             Bundle bundle = intent.getExtras();
             songList = (ArrayList<Song>) bundle.getSerializable(ConstantValues.PLAYLIST);
             if (songList != null) {
@@ -234,10 +234,10 @@ public class MusicPlayService extends Service {
         if (mediaPlayer != null) {
             mediaPlayer.start();
         }
-        MusicUtils.HAS_PLAYLIST=true;
+        MusicUtils.HAS_PLAYLIST = true;
 
-        Intent intent = new Intent(this, MusicPlayActivity.class);
-        intent.putExtra(ConstantValues.PLAYLIST_CHANGED,false);
+        Intent intent = new Intent(this, MusicPlayActivity2.class);
+        intent.putExtra(ConstantValues.PLAYLIST_CHANGED, false);
 //        intent.putExtra("from_notifation", true);
 //        intent.putExtra("is_remote_play", isRemotePlay);
 
@@ -284,12 +284,7 @@ public class MusicPlayService extends Service {
     }
 
     private void setPreviousPosition() {
-        if (mode == REPEAT_MODE_NORMAL) {
-            currentPosition--;
-            if (currentPosition < 0) {
-                currentPosition = 0;
-            }
-        } else if (mode == REPEAT_MODE_SINGLE) {
+        if (mode == REPEAT_MODE_SINGLE) {
             if (!isCompletion) {
                 currentPosition--;
                 if (currentPosition < 0) {
@@ -311,18 +306,11 @@ public class MusicPlayService extends Service {
 
     private void next() {
         setNextPosition();
-        if ((mode != REPEAT_MODE_NORMAL) || (mode == REPEAT_MODE_NORMAL && currentPosition != songListSize - 1) || (mode == REPEAT_MODE_NORMAL && currentPosition == songListSize - 1 && !isCompletion)) {
-            openAudio(currentPosition);
-        }
+        openAudio(currentPosition);
     }
 
     private void setNextPosition() {
-        if (mode == REPEAT_MODE_NORMAL) {
-            currentPosition++;
-            if (currentPosition >= songListSize) {
-                currentPosition = songListSize - 1;
-            }
-        } else if (mode == REPEAT_MODE_ALL) {
+        if (mode == REPEAT_MODE_ALL) {
             currentPosition++;
             if (currentPosition >= songListSize) {
                 currentPosition = 0;

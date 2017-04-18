@@ -2,51 +2,39 @@ package com.liuhaoyuan.myplayer.activity;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.database.Cursor;
 import android.media.AudioManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.liuhaoyuan.myplayer.R;
 import com.liuhaoyuan.myplayer.aidl.IMusicPlayService;
 import com.liuhaoyuan.myplayer.api.DataObserver;
 import com.liuhaoyuan.myplayer.api.MusicApi;
-import com.liuhaoyuan.myplayer.db.HistoryDbManager;
-import com.liuhaoyuan.myplayer.domain.music.Lyric;
-import com.liuhaoyuan.myplayer.domain.music.NetLyricInfo;
 import com.liuhaoyuan.myplayer.aidl.Song;
-import com.liuhaoyuan.myplayer.manager.ThreadPoolManger;
 import com.liuhaoyuan.myplayer.service.MusicPlayService;
 import com.liuhaoyuan.myplayer.utils.ConstantValues;
-import com.liuhaoyuan.myplayer.utils.LogUtils;
 import com.liuhaoyuan.myplayer.utils.LyricUtils;
 import com.liuhaoyuan.myplayer.utils.TimeFormatUtils;
-import com.liuhaoyuan.myplayer.view.LyicTextView;
+import com.liuhaoyuan.myplayer.view.LyricTextView;
 
 import org.xutils.x;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by liuhaoyuan on 2016/7/24.
@@ -125,7 +113,7 @@ public class MusicPlayActivity extends AppCompatActivity {
 
     private PreparedReceiver mReceiver;
     private boolean isFromNotification;
-    private LyicTextView lyicTextView;
+    private LyricTextView lyicTextView;
 
     private boolean isRemotePlay = false;
     private ArrayList<Song> mSongList;
@@ -156,7 +144,7 @@ public class MusicPlayActivity extends AppCompatActivity {
         play = (ImageButton) findViewById(R.id.btn_music_play_pause);
         next = (ImageButton) findViewById(R.id.btn_music_play_next);
         heart = (ImageButton) findViewById(R.id.btn_music_play_heart);
-        lyicTextView = (LyicTextView) findViewById(R.id.lyric);
+        lyicTextView = (LyricTextView) findViewById(R.id.lyric);
         musicBackground = (ImageView) findViewById(R.id.iv_background);
 
     }
@@ -335,9 +323,7 @@ public class MusicPlayActivity extends AppCompatActivity {
             }
 
             playMode = musicService.getPlayMode();
-            if (playMode == MusicPlayService.REPEAT_MODE_NORMAL) {
-                mode.setBackgroundResource(R.drawable.mode_normal);
-            } else if (playMode == MusicPlayService.REPEAT_MODE_RANDOM) {
+            if (playMode == MusicPlayService.REPEAT_MODE_RANDOM) {
                 mode.setBackgroundResource(R.drawable.mode_random);
             } else if (playMode == MusicPlayService.REPEAT_MODE_ALL) {
                 mode.setBackgroundResource(R.drawable.mode_all);
@@ -443,11 +429,7 @@ public class MusicPlayActivity extends AppCompatActivity {
                     break;
                 case R.id.btn_music_play_mode:
                     try {
-                        if (playMode == MusicPlayService.REPEAT_MODE_NORMAL) {
-                            playMode = MusicPlayService.REPEAT_MODE_SINGLE;
-                            musicService.setPlayMode(MusicPlayService.REPEAT_MODE_SINGLE);
-                            mode.setBackgroundResource(R.drawable.mode_single);
-                        } else if (playMode == MusicPlayService.REPEAT_MODE_SINGLE) {
+                        if (playMode == MusicPlayService.REPEAT_MODE_SINGLE) {
                             playMode = MusicPlayService.REPEAT_MODE_ALL;
                             musicService.setPlayMode(MusicPlayService.REPEAT_MODE_ALL);
                             mode.setBackgroundResource(R.drawable.mode_all);
@@ -456,8 +438,8 @@ public class MusicPlayActivity extends AppCompatActivity {
                             musicService.setPlayMode(MusicPlayService.REPEAT_MODE_RANDOM);
                             mode.setBackgroundResource(R.drawable.mode_random);
                         } else if (playMode == MusicPlayService.REPEAT_MODE_RANDOM) {
-                            playMode = MusicPlayService.REPEAT_MODE_NORMAL;
-                            musicService.setPlayMode(MusicPlayService.REPEAT_MODE_NORMAL);
+                            playMode = MusicPlayService.REPEAT_MODE_SINGLE;
+                            musicService.setPlayMode(MusicPlayService.REPEAT_MODE_SINGLE);
                             mode.setBackgroundResource(R.drawable.mode_normal);
                         }
                     } catch (RemoteException e) {

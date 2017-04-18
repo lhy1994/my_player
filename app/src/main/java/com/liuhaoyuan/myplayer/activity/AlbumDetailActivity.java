@@ -24,6 +24,7 @@ import com.liuhaoyuan.myplayer.aidl.Song;
 import com.liuhaoyuan.myplayer.db.FavoriteDbManager;
 import com.liuhaoyuan.myplayer.domain.music.XiaMiAlbumSongsInfo;
 import com.liuhaoyuan.myplayer.domain.music.XiaMiArtistAlbumInfo;
+import com.liuhaoyuan.myplayer.manager.ThreadPoolManger;
 import com.liuhaoyuan.myplayer.utils.ConstantValues;
 import com.liuhaoyuan.myplayer.utils.MusicUtils;
 
@@ -144,9 +145,12 @@ public class AlbumDetailActivity extends AppCompatActivity {
                                     MusicUtils.playMusic(AlbumDetailActivity.this,position,true,mSongList);
                                     break;
                                 case R.id.menu_favorite:
-                                    FavoriteDbManager dbUtils = FavoriteDbManager.getInstance(AlbumDetailActivity.this);
-                                    Song song = mSongList.get(position);
-                                    dbUtils.insertSong(song.songid,song.songname,song.singername,song.url,song.albumpic_big);
+                                    ThreadPoolManger.getInstance().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            FavoriteDbManager.getInstance(getApplicationContext()).insertSong(mSongList.get(position));
+                                        }
+                                    });
                                     final Snackbar snackbar=Snackbar.make(v,"收藏成功",Snackbar.LENGTH_LONG);
                                     snackbar.setAction("知道了", new View.OnClickListener() {
                                         @Override

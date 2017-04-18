@@ -75,4 +75,6 @@
 
     <color name="blueGreyPrimary">#607D8B</color>
     <color name="blueGreyPrimaryDark">#455A64</color>
+
+    <color name="black_translucent">#66000000</color>
 </resources>

@@ -15,7 +15,7 @@ public class FavoriteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table favorite_song(_id integer primary key autoincrement,song_id varchar(50),song_name varchar(50),singer_name varchar(50),url varchar(50),pic_url varchar(50))");
+        db.execSQL("create table favorite_song(song_url varchar(50) primary key,song_id varchar(50),song_info text)");
         db.execSQL("create table favorite_singer(_id integer primary key autoincrement,singer_id varchar(50),singer_name varchar(50),singer_pic varchar(50))");
         db.execSQL("create table favorite_video(_id integer primary key autoincrement,video_id varchar(50),video_info text)");
     }

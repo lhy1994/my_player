@@ -78,6 +78,10 @@
             android:name=".activity.MusicPlayActivity"
             android:launchMode="singleTask"
             android:theme="@style/Theme.Design.NoActionBar" />
+        <activity
+            android:name=".activity.MusicPlayActivity2"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service android:name=".service.MusicPlayService">
             <intent-filter>
@@ -89,7 +93,9 @@
         <activity
             android:name=".activity.VideoDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.VideoListActivity" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".activity.VideoListActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.SearchActivity"
             android:label="@string/title_activity_search"
@@ -113,6 +119,10 @@
         <activity
             android:name=".activity.RanksDetailActivity"
             android:label="@string/title_activity_ranks_detail"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.PlaylistActivity"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 

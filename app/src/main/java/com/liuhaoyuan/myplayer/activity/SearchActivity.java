@@ -70,10 +70,14 @@ public class SearchActivity extends AppCompatActivity {
         Intent intent = getIntent();
         final int fragmentId = intent.getIntExtra(ConstantValues.FRAGMENT_ID, R.id.nav_music);
         String query = intent.getStringExtra(ConstantValues.SEARCH_STRING);
-        if (fragmentId == R.id.nav_music) {
-            doMusicSearch(query);
-        } else if (fragmentId == R.id.nav_video) {
-            doVideoSearch(query);
+        if (!TextUtils.isEmpty(query)) {
+            if (fragmentId == R.id.nav_music) {
+                doMusicSearch(query);
+            } else if (fragmentId == R.id.nav_video) {
+                doVideoSearch(query);
+            }
+        }else {
+            searchView.setIconified(false);
         }
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -230,7 +234,7 @@ public class SearchActivity extends AppCompatActivity {
     private void parseShowResult(String result, String queryString) {
         Gson gson = new Gson();
         VideoShowResultInfo videoShowResultInfo = gson.fromJson(result, VideoShowResultInfo.class);
-        if (shows!=null){
+        if (shows != null) {
             shows = videoShowResultInfo.shows;
         }
 
@@ -268,7 +272,7 @@ public class SearchActivity extends AppCompatActivity {
     private void parseResult(String result) {
         Gson gson = new Gson();
         VideoResultInfo videoResultInfo = gson.fromJson(result, VideoResultInfo.class);
-        if (videos!=null){
+        if (videos != null) {
             videos = videoResultInfo.videos;
         }
 
@@ -317,8 +321,8 @@ public class SearchActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         Intent intent = new Intent(SearchActivity.this, VideoDetailActivity.class);
 //                        intent.putExtra("video_id", shows.get(position).id);
-                        Bundle bundle=new Bundle();
-                        bundle.putString(ConstantValues.VIDEO_ID,shows.get(position).id);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(ConstantValues.VIDEO_ID, shows.get(position).id);
                         intent.putExtras(bundle);
                         startActivity(intent);
                     }

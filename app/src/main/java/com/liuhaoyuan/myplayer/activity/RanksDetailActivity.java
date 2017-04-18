@@ -26,6 +26,7 @@ import com.liuhaoyuan.myplayer.api.DataObserver;
 import com.liuhaoyuan.myplayer.api.MusicApi;
 import com.liuhaoyuan.myplayer.aidl.Song;
 import com.liuhaoyuan.myplayer.db.FavoriteDbManager;
+import com.liuhaoyuan.myplayer.manager.ThreadPoolManger;
 import com.liuhaoyuan.myplayer.utils.MusicUtils;
 
 import org.xutils.x;
@@ -149,9 +150,12 @@ public class RanksDetailActivity extends AppCompatActivity {
                                     MusicUtils.playMusic(RanksDetailActivity.this, position, true, data);
                                     break;
                                 case R.id.menu_favorite:
-                                    FavoriteDbManager dbUtils = FavoriteDbManager.getInstance(RanksDetailActivity.this);
-                                    Song song = data.get(position);
-                                    dbUtils.insertSong(song.songid,song.songname,song.singername,song.url,song.albumpic_big);
+                                    ThreadPoolManger.getInstance().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            FavoriteDbManager.getInstance(getApplicationContext()).insertSong(data.get(position));
+                                        }
+                                    });
                                     final Snackbar snackbar=Snackbar.make(v,"收藏成功",Snackbar.LENGTH_LONG);
                                     snackbar.setAction("知道了", new View.OnClickListener() {
                                         @Override

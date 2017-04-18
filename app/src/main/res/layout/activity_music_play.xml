@@ -96,7 +96,7 @@
             android:paddingBottom="30dp"
             android:layout_weight="1">
 
-            <com.liuhaoyuan.myplayer.view.LyicTextView
+            <com.liuhaoyuan.myplayer.view.LyricTextView
                 android:id="@+id/lyric"
                 android:textSize="16sp"
                 android:layout_height="match_parent"

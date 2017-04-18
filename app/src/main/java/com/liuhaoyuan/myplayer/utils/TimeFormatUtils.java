@@ -1,5 +1,9 @@
 package com.liuhaoyuan.myplayer.utils;
 
+import android.content.Context;
+
+import com.liuhaoyuan.myplayer.R;
+
 /**
  * Created by liuhaoyuan on 2016/7/22.
  */
@@ -35,5 +39,24 @@ public class TimeFormatUtils {
             ss = String.valueOf(second);
         }
         return sh+":"+sm+":"+ss;
+    }
+
+    public static String timeFormatNoHour(long ms){
+        String s = timeFormat(ms);
+        int i = s.indexOf(":");
+        return s.substring(i+1);
+    }
+
+    public static final String makeShortTimeString(final Context context, long secs) {
+        long hours, mins;
+
+        hours = secs / 3600;
+        secs %= 3600;
+        mins = secs / 60;
+        secs %= 60;
+
+        final String durationFormat = context.getResources().getString(
+                hours == 0 ? R.string.durationformatshort : R.string.durationformatlong);
+        return String.format(durationFormat, hours, mins, secs);
     }
 }

@@ -14,7 +14,7 @@
     <style name="IndigoTheme" parent="AppTheme.NoActionBar">
         <item name="colorPrimary">@color/indigoPrimary</item>
         <item name="colorPrimaryDark">@color/indigoPrimaryDark</item>
-        <item name="colorAccent">@color/pinkAccent</item>
+        <item name="colorAccent">@color/pinkPrimary</item>
     </style>
 
     <style name="PinkTheme" parent="AppTheme.NoActionBar">
@@ -38,7 +38,7 @@
     <style name="DeepPurpleTheme" parent="AppTheme.NoActionBar">
         <item name="colorPrimary">@color/deepPurplePrimary</item>
         <item name="colorPrimaryDark">@color/deepPurplePrimaryDark</item>
-        <item name="colorAccent">@color/amberAccent</item>
+        <item name="colorAccent">@color/pinkAccent</item>
     </style>
 
     <style name="GreenTheme" parent="AppTheme.NoActionBar">
@@ -117,6 +117,9 @@
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+    </style>
+    <style name="AppTheme.NoActionBar.FullScreen" parent="AppTheme.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

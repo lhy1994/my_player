@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity
         transaction.replace(R.id.fl_main, musicFragment);
         transaction.commit();
         navigationView.setCheckedItem(R.id.nav_music);
-        setTitle("Music");
+        setTitle(R.string.navigation_menu_music);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -155,10 +155,6 @@ public class MainActivity extends AppCompatActivity
                 case R.id.nav_local:
                     fragment = new LocalFragment();
                     fragmentHashMap.put(R.id.nav_local, fragment);
-                    break;
-                case R.id.nav_download:
-                    fragment = new DownloadFragment();
-                    fragmentHashMap.put(R.id.nav_download, fragment);
                     break;
                 case R.id.nav_favorite:
                     fragment = new FavoriteFragment();
@@ -260,25 +256,22 @@ public class MainActivity extends AppCompatActivity
             if (fragment != null) {
                 switch (id) {
                     case R.id.nav_music:
-                        setTitle("Music");
+                        setTitle(R.string.navigation_menu_music);
                         break;
                     case R.id.nav_video:
-                        setTitle("Video");
+                        setTitle(R.string.navigation_menu_video);
                         break;
                     case R.id.nav_local:
-                        setTitle("Local");
-                        break;
-                    case R.id.nav_download:
-                        setTitle("Download");
+                        setTitle(R.string.navigation_menu_local);
                         break;
                     case R.id.nav_favorite:
-                        setTitle("Favorite");
+                        setTitle(R.string.navigation_menu_favorite);
                         break;
                     case R.id.nav_history:
-                        setTitle("History");
+                        setTitle(R.string.navigation_menu_history);
                         break;
                     case R.id.nav_theme:
-                        setTitle("Theme");
+                        setTitle(R.string.navigation_menu_theme);
                         break;
                     default:
                         break;

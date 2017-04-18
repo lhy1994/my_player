@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import io.vov.vitamio.utils.Log;
+
 /**
  * Created by liuhaoyuan on 2016/7/25.
  */
@@ -118,7 +120,7 @@ public class LyricUtils {
 
             Lyric lyric = new Lyric();
             for (int j = 0; j < timePoints.length; j++) {
-                if (timePoints[j] != 0) {
+                if (timePoints[j] != 0 && !content.isEmpty()) {
                     lyric.text = content;
                     lyric.timePoint = timePoints[j];
                     lyrics.add(lyric);
@@ -146,7 +148,7 @@ public class LyricUtils {
                 return -1;
             }
         } catch (NumberFormatException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             return -1;
         }
 
