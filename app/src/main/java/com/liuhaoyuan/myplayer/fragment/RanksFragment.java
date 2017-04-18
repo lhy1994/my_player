@@ -68,6 +68,7 @@ public class RanksFragment extends BaseFragment {
                         startActivity(intent);
                     }
 //                    startActivity(intent);
+                    
                 }
             });
         }
@@ -79,7 +80,6 @@ public class RanksFragment extends BaseFragment {
     }
 
     private class RankViewHolder extends RecyclerView.ViewHolder{
-
         private final ImageView imageView;
         private final TextView nameTv;
 
