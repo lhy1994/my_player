@@ -120,11 +120,11 @@ public class MainActivity extends AppCompatActivity
             }
         }
         mReceiver = new MyBroadcastReceiver();
-        IntentFilter intentFilter=new IntentFilter(ConstantValues.ACTION_CHANGE_THEME);
-        registerReceiver(mReceiver,intentFilter);
+        IntentFilter intentFilter = new IntentFilter(ConstantValues.ACTION_CHANGE_THEME);
+        registerReceiver(mReceiver, intentFilter);
     }
 
-    private class MyBroadcastReceiver extends BroadcastReceiver{
+    private class MyBroadcastReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mReceiver!=null){
+        if (mReceiver != null) {
             unregisterReceiver(mReceiver);
         }
     }
@@ -161,12 +161,12 @@ public class MainActivity extends AppCompatActivity
                     fragmentHashMap.put(R.id.nav_favorite, fragment);
                     break;
                 case R.id.nav_history:
-                    fragment=new HistoryFragment();
-                    fragmentHashMap.put(R.id.nav_history,fragment);
+                    fragment = new HistoryFragment();
+                    fragmentHashMap.put(R.id.nav_history, fragment);
                     break;
                 case R.id.nav_theme:
-                    fragment=new ThemeFragment();
-                    fragmentHashMap.put(R.id.nav_theme,fragment);
+                    fragment = new ThemeFragment();
+                    fragmentHashMap.put(R.id.nav_theme, fragment);
                     break;
             }
         }
@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity
                 MusicUtils.playMusic(this, 0, false, null);
             } else {
                 CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main);
-                final Snackbar snackbar = Snackbar.make(coordinatorLayout, "当前播放列表为空,请先添加歌曲", Snackbar.LENGTH_LONG);
+                final Snackbar snackbar = Snackbar.make(coordinatorLayout, "当前没有正在播放的歌曲", Snackbar.LENGTH_LONG);
                 snackbar.setAction("知道了", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -251,38 +251,70 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        if (mCurrentFragmentId != id) {
-            Fragment fragment = getFragment(id);
-            if (fragment != null) {
-                switch (id) {
-                    case R.id.nav_music:
-                        setTitle(R.string.navigation_menu_music);
-                        break;
-                    case R.id.nav_video:
-                        setTitle(R.string.navigation_menu_video);
-                        break;
-                    case R.id.nav_local:
-                        setTitle(R.string.navigation_menu_local);
-                        break;
-                    case R.id.nav_favorite:
-                        setTitle(R.string.navigation_menu_favorite);
-                        break;
-                    case R.id.nav_history:
-                        setTitle(R.string.navigation_menu_history);
-                        break;
-                    case R.id.nav_theme:
-                        setTitle(R.string.navigation_menu_theme);
-                        break;
-                    default:
-                        break;
-                }
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.replace(R.id.fl_main, fragment);
-                transaction.commit();
+        if (id == R.id.nav_playlist) {
+            if (MusicUtils.HAS_PLAYLIST) {
+                Intent intent = new Intent(this, PlaylistActivity.class);
+                intent.putExtra(ConstantValues.FROM_NOW_PLAYING, false);
+                startActivity(intent);
+            } else {
+                CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main);
+                final Snackbar snackbar = Snackbar.make(coordinatorLayout, "当前播放列表为空,请先添加歌曲", Snackbar.LENGTH_LONG);
+                snackbar.setAction("知道了", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        snackbar.dismiss();
+                    }
+                });
+                snackbar.show();
+            }
+        } else if (id==R.id.nav_nowplaying) {
+            if (MusicUtils.HAS_PLAYLIST) {
+                MusicUtils.playMusic(this, 0, false, null);
+            } else {
+                CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main);
+                final Snackbar snackbar = Snackbar.make(coordinatorLayout, "当前没有正在播放的歌曲", Snackbar.LENGTH_LONG);
+                snackbar.setAction("知道了", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        snackbar.dismiss();
+                    }
+                });
+                snackbar.show();
+            }
+        } else {
+            if (mCurrentFragmentId != id) {
+                Fragment fragment = getFragment(id);
+                if (fragment != null) {
+                    switch (id) {
+                        case R.id.nav_music:
+                            setTitle(R.string.navigation_menu_music);
+                            break;
+                        case R.id.nav_video:
+                            setTitle(R.string.navigation_menu_video);
+                            break;
+                        case R.id.nav_local:
+                            setTitle(R.string.navigation_menu_local);
+                            break;
+                        case R.id.nav_favorite:
+                            setTitle(R.string.navigation_menu_favorite);
+                            break;
+                        case R.id.nav_history:
+                            setTitle(R.string.navigation_menu_history);
+                            break;
+                        case R.id.nav_theme:
+                            setTitle(R.string.navigation_menu_theme);
+                            break;
+                        default:
+                            break;
+                    }
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    transaction.replace(R.id.fl_main, fragment);
+                    transaction.commit();
 
-                getSupportActionBar().invalidateOptionsMenu();
-                mCurrentFragmentId = id;
+                    getSupportActionBar().invalidateOptionsMenu();
+                    mCurrentFragmentId = id;
+                }
             }
         }
 

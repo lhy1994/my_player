@@ -6,8 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -16,14 +18,17 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.transition.AutoTransition;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -37,6 +42,8 @@ import com.liuhaoyuan.myplayer.APP;
 import com.liuhaoyuan.myplayer.R;
 import com.liuhaoyuan.myplayer.aidl.IMusicPlayService;
 import com.liuhaoyuan.myplayer.aidl.Song;
+import com.liuhaoyuan.myplayer.db.FavoriteDbManager;
+import com.liuhaoyuan.myplayer.manager.ThreadPoolManger;
 import com.liuhaoyuan.myplayer.utils.ConstantValues;
 import com.liuhaoyuan.myplayer.utils.ImageUtils;
 import com.liuhaoyuan.myplayer.utils.LogUtils;
@@ -65,6 +72,7 @@ public class PlaylistActivity extends AppCompatActivity {
     private int mCurrentPosition;
     private boolean mIsPlaying;
     private ComponentListener mListener;
+    private boolean mUpdatePlaylist = false;
 
     private Handler mProgressHandler;
     private Runnable mUpdateProgressTask = new Runnable() {
@@ -84,6 +92,7 @@ public class PlaylistActivity extends AppCompatActivity {
             }
         }
     };
+    private PlaylistAdapter mListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,15 +142,20 @@ public class PlaylistActivity extends AppCompatActivity {
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConstantValues.MUSIC_PREPARED);
+        intentFilter.addAction(ConstantValues.UPDATE_PLAYLIST);
         mReceiver = new PreparedReceiver();
         registerReceiver(mReceiver, intentFilter);
 
         bindMusicService();
+        setUpdateResult();
+    }
+
+    private void setUpdateResult() {
         boolean fromNowPlaying = getIntent().getBooleanExtra(ConstantValues.FROM_NOW_PLAYING, false);
-        if (fromNowPlaying){
-            Intent intent=new Intent();
-            intent.putExtra(ConstantValues.PLAYLIST_CHANGED,false);
-            setResult(1,intent);
+        if (fromNowPlaying) {
+            Intent intent = new Intent();
+            intent.putExtra(ConstantValues.UPDATE_PLAYLIST, mUpdatePlaylist);
+            setResult(1, intent);
         }
     }
 
@@ -166,6 +180,7 @@ public class PlaylistActivity extends AppCompatActivity {
                 mPlayBtn.setOnClickListener(mListener);
                 updateAlbumArt();
                 initList();
+                updateSongListCount();
             } else {
 
             }
@@ -200,9 +215,9 @@ public class PlaylistActivity extends AppCompatActivity {
             x.image().bind(mAlbumArtIv, imageUrl, imageOptions, new Callback.CommonCallback<Drawable>() {
                 @Override
                 public void onSuccess(Drawable result) {
-                    BitmapDrawable bitmapDrawable= (BitmapDrawable) result;
+                    BitmapDrawable bitmapDrawable = (BitmapDrawable) result;
                     Bitmap bitmap = bitmapDrawable.getBitmap();
-                    ImageTask imageTask=new ImageTask();
+                    ImageTask imageTask = new ImageTask();
                     imageTask.execute(bitmap);
                 }
 
@@ -226,18 +241,21 @@ public class PlaylistActivity extends AppCompatActivity {
         }
     }
 
+    private void updateSongListCount(){
+        mSongCountTv.setText(mSongList.size() + "首歌");
+    }
+
     private void initList() {
-        mSongCountTv.setText(mSongList.size()+"首歌");
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        PlaylistAdapter adapter = new PlaylistAdapter();
+        mListAdapter = new PlaylistAdapter();
         mSongListView.setLayoutManager(layoutManager);
-        mSongListView.setAdapter(adapter);
+        mSongListView.setAdapter(mListAdapter);
+        mSongListView.scrollToPosition(mCurrentPosition);
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-        if (mProgressHandler!=null){
+        if (mProgressHandler != null) {
             mProgressHandler.removeCallbacksAndMessages(null);
         }
         if (mReceiver != null) {
@@ -246,6 +264,7 @@ public class PlaylistActivity extends AppCompatActivity {
         if (mConn != null) {
             unbindService(mConn);
         }
+        super.onDestroy();
     }
 
     private class PreparedReceiver extends BroadcastReceiver {
@@ -253,10 +272,23 @@ public class PlaylistActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             try {
-                if (musicService!=null){
+                String action = intent.getAction();
+                if (ConstantValues.MUSIC_PREPARED.equals(action)) {
+                    if (musicService != null) {
+                        mCurrentPosition = musicService.getCurrentPosition();
+                        mListAdapter.notifyDataSetChanged();
+                        updateControlView();
+                        updateAlbumArt();
+                    }
+                } else if (ConstantValues.UPDATE_PLAYLIST.equals(action)) {
+                    mSongList = musicService.getSongList();
                     mCurrentPosition = musicService.getCurrentPosition();
-                    updateControlView();
-                    updateAlbumArt();
+                    mListAdapter.notifyDataSetChanged();
+                    updateSongListCount();
+                    if (!mUpdatePlaylist){
+                        mUpdatePlaylist=true;
+                        setUpdateResult();
+                    }
                 }
             } catch (RemoteException e) {
                 e.printStackTrace();
@@ -305,44 +337,73 @@ public class PlaylistActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(PlaylistHolder holder, final int position) {
-            Song song = mSongList.get(position);
-            final Bitmap[] pic = new Bitmap[1];
+            final Song song = mSongList.get(position);
+            if (position == mCurrentPosition) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    AnimationDrawable animationDrawable = (AnimationDrawable) getDrawable(R.drawable.ic_equalizer_white_36dp);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                        animationDrawable.setTint(getColor(R.color.pinkAccent));
+                        TypedArray typedArray = getTheme().obtainStyledAttributes(new int[]{android.R.attr.colorAccent});
+                        int color = typedArray.getColor(0, Color.WHITE);
+                        typedArray.recycle();
+                        animationDrawable.setTint(color);
+                    }
+                    animationDrawable.start();
+                    holder.mEqualizerIv.setImageDrawable(animationDrawable);
+                    holder.mEqualizerIv.setVisibility(View.VISIBLE);
+                    holder.mRankTv.setVisibility(View.INVISIBLE);
+                }
+            } else {
+                holder.mEqualizerIv.setVisibility(View.INVISIBLE);
+                holder.mRankTv.setVisibility(View.VISIBLE);
+            }
+            holder.mRankTv.setText((position + 1) + "");
             ImageOptions imageOptions = new ImageOptions.Builder().setFailureDrawableId(R.drawable.music_fail).build();
-            x.image().bind(holder.mAlbumLogoIv, song.albumpic_big, imageOptions, new Callback.CommonCallback<Drawable>() {
-                @Override
-                public void onSuccess(Drawable result) {
-                    BitmapDrawable bitmapDrawable= (BitmapDrawable) result;
-                    pic[0] = bitmapDrawable.getBitmap();
-                }
-
-                @Override
-                public void onError(Throwable ex, boolean isOnCallback) {
-
-                }
-
-                @Override
-                public void onCancelled(CancelledException cex) {
-
-                }
-
-                @Override
-                public void onFinished() {
-
-                }
-            });
+            x.image().bind(holder.mAlbumLogoIv, song.albumpic_big, imageOptions);
             holder.mSongNameTv.setText(song.songname);
             holder.mSingerNameTv.setText(song.singername);
             holder.mMoreBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-
+                public void onClick(final View v) {
+                    final PopupMenu popupMenu = new PopupMenu(PlaylistActivity.this, v);
+                    popupMenu.inflate(R.menu.popup_playlist);
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.menu_favorite:
+                                    ThreadPoolManger.getInstance().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            FavoriteDbManager.getInstance(getApplicationContext()).insertSong(song);
+                                        }
+                                    });
+                                    Snackbar.make(v, "收藏成功", Snackbar.LENGTH_LONG).show();
+                                    break;
+                                case R.id.menu_delete:
+                                    try {
+                                        if (musicService != null) {
+                                            musicService.deleteSong(position);
+                                            if (mCurrentPosition == position) {
+                                                musicService.openAudio(position);
+                                            }
+                                        }
+                                    } catch (RemoteException e) {
+                                        e.printStackTrace();
+                                    }
+                                    break;
+                            }
+                            return true;
+                        }
+                    });
+                    popupMenu.show();
                 }
             });
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     try {
-                        if (musicService != null && mCurrentPosition!=position) {
+                        if (musicService != null && mCurrentPosition != position) {
                             musicService.openAudio(position);
                         }
                     } catch (RemoteException e) {
@@ -364,6 +425,8 @@ public class PlaylistActivity extends AppCompatActivity {
         private TextView mSongNameTv;
         private TextView mSingerNameTv;
         private Button mMoreBtn;
+        private ImageView mEqualizerIv;
+        private TextView mRankTv;
 
         public PlaylistHolder(View itemView) {
             super(itemView);
@@ -371,6 +434,8 @@ public class PlaylistActivity extends AppCompatActivity {
             mSongNameTv = (TextView) itemView.findViewById(R.id.tv_song_name);
             mSingerNameTv = (TextView) itemView.findViewById(R.id.tv_singer_name);
             mMoreBtn = (Button) itemView.findViewById(R.id.btn_more);
+            mEqualizerIv = (ImageView) itemView.findViewById(R.id.iv_equalizer);
+            mRankTv = (TextView) itemView.findViewById(R.id.tv_rank);
         }
     }
 

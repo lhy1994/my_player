@@ -75,6 +75,8 @@ public class MusicPlayService extends Service {
         @Override
         public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
             Toast.makeText(MusicPlayService.this, "音乐播放出错", Toast.LENGTH_SHORT).show();
+            isCompletion=false;
+            next();
             return false;
         }
     };
@@ -205,10 +207,26 @@ public class MusicPlayService extends Service {
             return songList;
         }
 
+        @Override
+        public void deleteSong(int position) throws RemoteException {
+            if (songList!=null && position<songList.size()){
+                if (position<currentPosition){
+                    currentPosition--;
+                }
+                songList.remove(position);
+                Intent intent=new Intent();
+                intent.setAction(ConstantValues.UPDATE_PLAYLIST);
+                sendBroadcast(intent);
+            }
+        }
+
     };
 
     private void openAudio(int position) {
         currentPosition = position;
+        if (currentPosition>=songList.size()){
+            currentPosition=0;
+        }
         currentSong = songList.get(currentPosition);
 
         if (mediaPlayer != null) {
@@ -288,18 +306,18 @@ public class MusicPlayService extends Service {
             if (!isCompletion) {
                 currentPosition--;
                 if (currentPosition < 0) {
-                    currentPosition = 0;
+                    currentPosition = songList.size()-1;
                 }
             }
         } else if (mode == REPEAT_MODE_RANDOM) {
-            int max = songListSize - 1;
+            int max = songList.size() - 1;
             int min = 0;
             Random random = new Random();
             currentPosition = random.nextInt(max) % (max - min + 1) + min;
         } else if (mode == REPEAT_MODE_ALL) {
             currentPosition--;
             if (currentPosition < 0) {
-                currentPosition = songListSize - 1;
+                currentPosition = songList.size() - 1;
             }
         }
     }
@@ -312,19 +330,19 @@ public class MusicPlayService extends Service {
     private void setNextPosition() {
         if (mode == REPEAT_MODE_ALL) {
             currentPosition++;
-            if (currentPosition >= songListSize) {
+            if (currentPosition >= songList.size()) {
                 currentPosition = 0;
             }
         } else if (mode == REPEAT_MODE_RANDOM) {
-            int max = songListSize - 1;
+            int max = songList.size() - 1;
             int min = 0;
             Random random = new Random();
             currentPosition = random.nextInt(max) % (max - min + 1) + min;
         } else if (mode == REPEAT_MODE_SINGLE) {
             if (!isCompletion) {
                 currentPosition++;
-                if (currentPosition >= songListSize) {
-                    currentPosition = songListSize - 1;
+                if (currentPosition >= songList.size()) {
+                    currentPosition = 0;
                 }
             }
         }

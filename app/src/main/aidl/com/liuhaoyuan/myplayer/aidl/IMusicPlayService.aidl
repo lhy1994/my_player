@@ -42,4 +42,6 @@ interface IMusicPlayService {
     boolean isPlaying();
 
     List<Song> getSongList();
+
+    void deleteSong(int position);
 }

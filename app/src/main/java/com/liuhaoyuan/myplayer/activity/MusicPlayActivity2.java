@@ -157,7 +157,8 @@ public class MusicPlayActivity2 extends AppCompatActivity {
                 try {
                     mSeekBar.setProgress(musicService.getCurrentProgress());
                     if (isPlaying && !isDestoryed) {
-                        mProgressHandler.postDelayed(this, 1000);
+                        mProgressHandler.removeCallbacks(this);
+                        mProgressHandler.postDelayed(this, 100);
                     }
                 } catch (RemoteException e) {
                     e.printStackTrace();
@@ -261,16 +262,16 @@ public class MusicPlayActivity2 extends AppCompatActivity {
             startActivity(intent);
         } else if (itemId == R.id.action_playlist) {
             Intent intent = new Intent(this, PlaylistActivity.class);
-            intent.putExtra(ConstantValues.FROM_NOW_PLAYING,true);
+            intent.putExtra(ConstantValues.FROM_NOW_PLAYING, true);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this,
-                        new Pair<View, String>(mSongNameTv,getString(R.string.transition_song_name)),
-                        new Pair<View, String>(mSingerNameTv,getString(R.string.transition_singer_name)),
-                        new Pair<View, String>(mMusicPlayBtn,getString(R.string.transition_play_button))
+                        new Pair<View, String>(mSongNameTv, getString(R.string.transition_song_name)),
+                        new Pair<View, String>(mSingerNameTv, getString(R.string.transition_singer_name)),
+                        new Pair<View, String>(mMusicPlayBtn, getString(R.string.transition_play_button))
                 );
-                startActivityForResult(intent,1,options.toBundle());
-            }else {
-                startActivityForResult(intent,1);
+                startActivityForResult(intent, 1, options.toBundle());
+            } else {
+                startActivityForResult(intent, 1);
             }
         }
         return super.onOptionsItemSelected(item);
@@ -279,11 +280,14 @@ public class MusicPlayActivity2 extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode==1){
-            Intent intent=new Intent();
-            intent.setAction(ConstantValues.MUSIC_PREPARED);
-            sendBroadcast(intent);
+        boolean updatePlaylist = data.getBooleanExtra(ConstantValues.UPDATE_PLAYLIST, false);
+        if (updatePlaylist) {
+            updateSonglistFromService();
         }
+        LogUtils.e(this, updatePlaylist + "");
+        Intent intent = new Intent();
+        intent.setAction(ConstantValues.MUSIC_PREPARED);
+        sendBroadcast(intent);
     }
 
     private void init() {
@@ -348,11 +352,7 @@ public class MusicPlayActivity2 extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             if (musicService != null) {
                 if (!mPlaylisChanged) {
-                    try {
-                        mSongList = (ArrayList<Song>) musicService.getSongList();
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
+                    updateSonglistFromService();
                 }
                 initListener();
                 getMusicInfo();
@@ -405,6 +405,18 @@ public class MusicPlayActivity2 extends AppCompatActivity {
             musicService = null;
         }
     };
+
+    private void updateSonglistFromService() {
+        try {
+            if (musicService != null) {
+                mSongList = (ArrayList<Song>) musicService.getSongList();
+                mCurrentPosition = musicService.getCurrentPosition();
+                mLyrics=null;
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void initListener() {
         mListener = new MusicListener();
@@ -468,7 +480,7 @@ public class MusicPlayActivity2 extends AppCompatActivity {
             int dur = musicService.getDuration();
             mSeekBar.setMax(dur);
             mProgressHandler = new Handler();
-            mProgressHandler.postDelayed(mUpdateProgress, 1000);
+            mProgressHandler.postDelayed(mUpdateProgress, 100);
             initAlbumArt();
             initTimeViewInfo();
 //            mHandler.sendEmptyMessageDelayed(UPDATE, 1000);
@@ -527,6 +539,7 @@ public class MusicPlayActivity2 extends AppCompatActivity {
     }
 
     private void initAlbumArt() {
+        LogUtils.e(this, mCurrentPosition + "");
         String imageUrl = mSongList.get(mCurrentPosition).albumpic_big;
         if (!TextUtils.isEmpty(imageUrl)) {
             ImageOptions imageOptions = new ImageOptions.Builder().setFailureDrawableId(R.drawable.music_fail).build();
@@ -564,14 +577,14 @@ public class MusicPlayActivity2 extends AppCompatActivity {
         mLyricTv.setLyrics(null);
         if (mSongList != null && mSongList.size() > 0) {
             try {
-                if (mLyrics!=null && mCurrentUrl.equals(musicService.getUrl())){
+                if (mLyrics != null && mCurrentUrl.equals(musicService.getUrl())) {
                     mLyricTv.setLyrics(mLyrics);
 
                     mLyricHandler = new Handler();
                     //此处延时是为了防止阻塞其他Handler
                     mLyricHandler.postDelayed(mUpdateLyric, 1000);
-                }else {
-                    mCurrentUrl=musicService.getUrl();
+                } else {
+                    mCurrentUrl = musicService.getUrl();
                     String songId = mSongList.get(mCurrentPosition).songid;
                     if (TextUtils.isEmpty(songId)) {
                         searchMoreLyrics(mSongList.get(mCurrentPosition).songname);
@@ -607,13 +620,13 @@ public class MusicPlayActivity2 extends AppCompatActivity {
                     LyricUtils lyricUtils = new LyricUtils();
                     lyricUtils.readLyricString(data);
                     mLyricTv.setLyrics(lyricUtils.getLyrics());
-                    mLyrics=lyricUtils.getLyrics();
+                    mLyrics = lyricUtils.getLyrics();
                     mLyricHandler = new Handler();
                     //此处延时是为了防止阻塞其他Handler
                     mLyricHandler.postDelayed(mUpdateLyric, 1000);
-                }else {
+                } else {
                     mLyricTv.setLyrics(null);
-                    mLyrics=null;
+                    mLyrics = null;
                 }
             }
         });

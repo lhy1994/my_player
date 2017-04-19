@@ -20,6 +20,7 @@ public class ConstantValues {
     public static final String SINGER_PIC="singer_pic";
     public static final String MUSIC_PREPARED="prepared";
     public static final String FROM_NOW_PLAYING="from_now_playing";
+    public static final String UPDATE_PLAYLIST="update_playlist";
 
     public static final String VIDEO_TYPE="video_type";
     public static final String VIDEO_PIC="video_pic";

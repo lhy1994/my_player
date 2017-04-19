@@ -4,27 +4,36 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_music"
-            android:icon="@drawable/ic_nav_music"
+            android:icon="@drawable/ic_library_music_white_24dp"
             android:title="@string/navigation_menu_music" />
         <item
             android:id="@+id/nav_video"
-            android:icon="@drawable/ic_nav_video"
+            android:icon="@drawable/ic_video_library_white_24dp"
             android:title="@string/navigation_menu_video" />
         <item
             android:id="@+id/nav_local"
-            android:icon="@drawable/ic_menu_local"
+            android:icon="@drawable/ic_person_white_24dp"
             android:title="@string/navigation_menu_local" />
         <item
             android:id="@+id/nav_favorite"
-            android:icon="@drawable/ic_action_favorite"
+            android:icon="@drawable/ic_star_white_36dp"
             android:title="@string/navigation_menu_favorite" />
+
+        <item
+            android:id="@+id/nav_playlist"
+            android:icon="@drawable/ic_queue_music_white_24dp"
+            android:title="@string/navigation_menu_playlist"/>
+        <item
+            android:id="@+id/nav_nowplaying"
+            android:icon="@drawable/ic_music_note_white_24dp"
+            android:title="@string/navigation_menu_nowplaying" />
         <item
             android:id="@+id/nav_history"
-            android:icon="@drawable/ic_action_history"
+            android:icon="@drawable/ic_history_white_24dp"
             android:title="@string/navigation_menu_history" />
         <item
             android:id="@+id/nav_theme"
-            android:icon="@drawable/ic_action_theme"
+            android:icon="@drawable/ic_color_lens_white_24dp"
             android:title="@string/navigation_menu_theme" />
     </group>
 </menu>
